@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Giỏ hàng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/customer/checkout.css?v=20260303c" />
+  </head>
+  <body th:attr="data-customer-id=${customerId}">
+    <div class="cart-page">
+      <header class="cart-header">
+        <a class="back-link" th:href="@{/customer/menu(kh=${customerId})}"
+          >← Quay lại menu</a
+        >
+        <h1>Giỏ hàng</h1>
+      </header>
+
+      <div class="cart-layout">
+        <section class="card cart-list-card">
+          <div class="list-header">
+            <h3>Sản phẩm trong giỏ</h3>
+            <span id="cartCountText">0 sản phẩm</span>
+          </div>
+          <div id="orderItems" class="order-items"></div>
+          <div id="emptyCart" class="empty-cart" style="display: none">
+            Giỏ hàng đang trống.
+          </div>
+        </section>
+
+        <aside class="card summary-card">
+          <h3>Tóm tắt đơn hàng</h3>
+
+          <div class="summary-row">
+            <span>Tạm tính</span>
+            <strong id="subtotalAmount">0 VND</strong>
+          </div>
+
+          <div class="voucher-box">
+            <label for="voucherSelect">Mã giảm giá</label>
+            <div class="voucher-input-row">
+              <select id="voucherSelect">
+                <option value="">Chọn mã giảm giá</option>
+              </select>
+              <button type="button" id="applyVoucherBtn">Áp dụng</button>
+            </div>
+            <p id="voucherMessage" class="voucher-message"></p>
+          </div>
+
+          <div class="summary-row">
+            <span>Giảm giá</span>
+            <strong id="discountAmount">0 VND</strong>
+          </div>
+
+          <div class="summary-row total-row">
+            <span>Tổng thanh toán</span>
+            <strong id="finalTotalAmount">0 VND</strong>
+          </div>
+
+          <button class="btn-primary" id="submitOrder">Thanh toán</button>
+        </aside>
+      </div>
+    </div>
+
+    <script type="module" src="/js/customer/checkout.js?v=20260310a"></script>
+  </body>
+</html>

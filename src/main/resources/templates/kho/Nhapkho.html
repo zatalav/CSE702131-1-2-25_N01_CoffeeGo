@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhập Kho</title>
+    <link rel="stylesheet" th:href="@{/css/kho/nhapkho.css}" />
+  </head>
+  <body>
+    <div class="kho-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-icon">☕</span>
+          <span class="brand-text">Coffee Shop</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/kho/dashboard}">
+            <span class="nav-icon">▦</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item active" th:href="@{/kho/nhapkho}">
+            <span class="nav-icon">⬇</span>
+            <span>Nhập Kho</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/xuatkho}">
+            <span class="nav-icon">⬆</span>
+            <span>Xuất Kho</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/tonkho}">
+            <span class="nav-icon">≣</span>
+            <span>Danh Sách Tồn Kho</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a class="nav-item" href="#">
+            <span class="nav-icon">⎋</span>
+            <span>Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <h1>Nhập Kho</h1>
+          </div>
+          <div class="topbar-user">
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ⋯
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="toolbar">
+          <form class="search-box" method="get" th:action="@{/kho/nhapkho}">
+            <input
+              type="hidden"
+              name="size"
+              th:value="${pageSize != null ? pageSize : 20}"
+            />
+            <input
+              id="searchInput"
+              name="q"
+              type="text"
+              th:value="${keyword}"
+              placeholder="Tìm kiếm phiếu nhập kho..."
+            />
+            <button class="search-submit" type="submit" aria-label="Tìm kiếm">
+              <span class="search-icon" aria-hidden="true">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M21 21l-4.35-4.35"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+            </button>
+          </form>
+          <button id="exportBtn" class="btn btn-secondary" type="button">
+            Xuất file
+          </button>
+        </section>
+
+        <section class="action-row">
+          <a class="btn btn-primary" th:href="@{/kho/nhapkho/tao}">
+            + Tạo Phiếu Nhập Kho Mới
+          </a>
+        </section>
+
+        <section class="table-card">
+          <div id="exportAlert" class="alert" style="display: none"></div>
+          <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+          </div>
+          <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã phiếu</th>
+                <th>Ngày nhập</th>
+                <th>Người nhập</th>
+                <th>Ghi chú</th>
+                <th class="action-header">Thao tác</th>
+                <th>Chọn</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr th:each="nk : ${dsNhapKho}">
+                <td th:text="${nk.nhapkho_id}">PN-20250201</td>
+                <td th:text="${#temporals.format(nk.ngay_nhap, 'dd/MM/yyyy')}">
+                  01/02/2026
+                </td>
+                <td th:text="${nk.nhanvien != null ? nk.nhanvien.tenNv : ''}">
+                  Nguyễn Hà
+                </td>
+                <td th:text="${nk.ghiChu != null ? nk.ghiChu : '-'}">
+                  Nhập nhanh lô A
+                </td>
+                <td class="action-cell">
+                  <button
+                    class="action-btn open-view"
+                    type="button"
+                    th:data-id="${nk.nhapkho_id}"
+                    th:data-ngay="${nk.ngay_nhap != null ? #temporals.format(nk.ngay_nhap, 'dd/MM/yyyy') : ''}"
+                    th:data-nv="${nk.nhanvien != null ? nk.nhanvien.tenNv : ''}"
+                    th:data-ghichu="${nk.ghiChu != null ? nk.ghiChu : ''}"
+                  >
+                    Xem
+                  </button>
+                  <button
+                    class="action-btn danger open-delete"
+                    type="button"
+                    th:data-id="${nk.nhapkho_id}"
+                  >
+                    Xóa
+                  </button>
+                </td>
+                <td class="select-cell">
+                  <input
+                    class="select-row"
+                    type="checkbox"
+                    th:value="${nk.nhapkho_id}"
+                  />
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(dsNhapKho)}">
+                <td colspan="6" class="empty-cell">Chưa có phiếu nhập kho.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="table-footer">
+            <span class="table-count"
+              >Tổng số:
+              <span
+                th:text="${totalItems != null ? totalItems : #lists.size(dsNhapKho)}"
+                >0</span
+              >
+              phiếu nhập kho</span
+            >
+            <div
+              class="pagination"
+              th:if="${totalPages != null and totalPages > 1}"
+            >
+              <a
+                class="page-btn"
+                th:classappend="${currentPage == 0} ? ' disabled'"
+                th:href="${currentPage > 0} ? @{/kho/nhapkho(page=${currentPage - 1},size=${pageSize},q=${keyword})} : '#'"
+                aria-label="Trang trước"
+                >&#8249;</a
+              >
+              <span class="page-btn active" th:text="${currentPage + 1}"
+                >1</span
+              >
+              <span class="page-total"
+                >/ <span th:text="${totalPages}">1</span></span
+              >
+              <a
+                class="page-btn"
+                th:classappend="${currentPage + 1 >= totalPages} ? ' disabled'"
+                th:href="${currentPage + 1 < totalPages} ? @{/kho/nhapkho(page=${currentPage + 1},size=${pageSize},q=${keyword})} : '#'"
+                aria-label="Trang sau"
+                >&#8250;</a
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="viewModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Chi tiết phiếu nhập kho</h3>
+          <button class="close-btn" id="closeViewModal">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="report-header">
+            <div>
+              <p><strong>Mã phiếu:</strong> <span id="viewMaPhieu"></span></p>
+              <p><strong>Ngày nhập:</strong> <span id="viewNgayNhap"></span></p>
+            </div>
+            <div>
+              <p>
+                <strong>Người nhập:</strong> <span id="viewNhanVien"></span>
+              </p>
+              <p><strong>Ghi chú:</strong> <span id="viewGhiChu"></span></p>
+            </div>
+          </div>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Nguyên liệu</th>
+                <th>Số lượng</th>
+                <th>Đơn vị</th>
+                <th>Nhà cung cấp</th>
+              </tr>
+            </thead>
+            <tbody id="viewNhapDetailBody"></tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="closeViewBtn">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Xóa phiếu nhập kho</h3>
+          <button class="close-btn" id="closeDeleteModal">×</button>
+        </div>
+        <form
+          class="modal-body"
+          method="post"
+          th:action="@{/kho/nhapkho/delete}"
+        >
+          <input type="hidden" name="maPhieu" id="deleteMaPhieu" />
+          <p>
+            Bạn có chắc muốn xóa phiếu <strong id="deleteMaPhieuText"></strong>?
+          </p>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cancelDeleteBtn"
+            >
+              Hủy
+            </button>
+            <button type="submit" class="btn btn-primary danger">Xóa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script th:src="@{/js/kho/nhapkho.js}"></script>
+  </body>
+</html>

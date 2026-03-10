@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Kho Bếp</title>
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/NhanVien.css/donhang.css}" />
+    <link rel="stylesheet" th:href="@{/css/NhanVien.css/Khobep.css}" />
+  </head>
+  <body>
+    <div class="order-shell kitchen-page">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-text">coffee</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/nhanvien/donhang}">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Đặt Hàng</span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/donhang-khach}">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Đơn Hàng</span>
+          </a>
+          <a class="nav-item nav-history" th:href="@{/nhanvien/lichsu-donhang}">
+            <span class="nav-icon">🕘</span>
+            <span class="nav-label">Lịch Sử</span>
+          </a>
+          <a class="nav-item active" th:href="@{/nhanvien/khobep}">
+            <span class="nav-icon">🍳</span>
+            <span class="nav-label">Kho Bếp</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="order-main">
+        <header class="order-topbar">
+          <div>
+            <h1>Kho Bếp</h1>
+          </div>
+          <div class="topbar-actions">
+            <div class="search-box">
+              <input
+                id="kitchenSearch"
+                type="text"
+                placeholder="Tìm nguyên liệu..."
+              />
+              <span class="search-icon">🔍</span>
+            </div>
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ☰
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="kitchen-section">
+          <div class="section-header">
+            <h3>Danh sách nguyên liệu tại bếp</h3>
+          </div>
+          <div class="kitchen-card">
+            <table class="kitchen-table">
+              <thead>
+                <tr>
+                  <th>Mã</th>
+                  <th>Nguyên liệu</th>
+                  <th>Số lượng</th>
+                  <th>Nhà cung cấp</th>
+                  <th>Đơn vị</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="kitchenBody">
+                <tr th:each="i : ${items}">
+                  <td th:text="${i.id}"></td>
+                  <td th:text="${i.ten}"></td>
+                  <td th:text="${i.slTon}"></td>
+                  <td th:text="${i.nhaCungCap}"></td>
+                  <td th:text="${i.donVi}"></td>
+                  <td>
+                    <span
+                      class="status-pill"
+                      th:classappend="${i.trangThai == 'Hết hàng'} ? ' danger' : (${i.trangThai == 'Sắp hết hàng'} ? ' warning' : ' ok')"
+                      th:text="${i.trangThai}"
+                    ></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(items)}">
+              Kho bếp chưa có nguyên liệu.
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="viewModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Chi tiết nguyên liệu</h2>
+          <button class="close-btn" id="closeViewModal">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mã</label>
+              <p id="viewId"></p>
+            </div>
+            <div class="form-group">
+              <label>Tên nguyên liệu</label>
+              <p id="viewTen"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Số lượng</label>
+              <p id="viewSlTon"></p>
+            </div>
+            <div class="form-group">
+              <label>Đơn vị</label>
+              <p id="viewDonVi"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nhà cung cấp</label>
+            <p id="viewNhaCungCap"></p>
+          </div>
+          <div class="form-group">
+            <label>Trạng thái</label>
+            <p id="viewTrangThai"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeViewBtn">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/nhanvien/Khobep.js}"></script>
+  </body>
+</html>

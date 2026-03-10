@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Nguyên Liệu</title>
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css(v=20260304b)}" />
+    <link rel="stylesheet" th:href="@{/css/Admin/quanly.css(v=20260304b)}" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img
+            th:src="@{/img/ChatGPT Image Mar 4, 2026, 03_24_57 PM.png}"
+            alt="CoffeeGo logo"
+            class="sidebar-logo"
+            style="
+              width: 70px;
+              height: 70px;
+              max-width: 70px;
+              max-height: 70px;
+              object-fit: contain;
+              display: block;
+            "
+          />
+          <h2>CoffeeGO</h2>
+        </div>
+        <ul>
+          <li><a th:href="@{/dashboard}">Bảng điều khiển</a></li>
+          <li><a th:href="@{/admin/coso}">Quản lý cơ sở</a></li>
+          <li class="has-submenu">
+            <a href="#" class="menu-toggle" aria-expanded="false">
+              <span class="menu-label">Quản Lý Người Dùng</span
+              ><span class="chev">▾</span>
+            </a>
+            <ul class="submenu">
+              <li><a th:href="@{/admin/nhanvien}">Quản Lý Nhân Viên</a></li>
+              <li><a th:href="@{/admin/khachhang}">Quản Lý Khách Hàng</a></li>
+            </ul>
+          </li>
+          <li><a th:href="@{/admin/danhmuc}">Quản lý danh mục</a></li>
+          <li><a th:href="@{/admin/sanpham}">Quản lý sản phẩm</a></li>
+          <li><a th:href="@{/admin/donhang}">Quản lý đơn hàng</a></li>
+          <li class="active">
+            <a th:href="@{/admin/nguyenlieu}">Quản lý nguyên liệu</a>
+          </li>
+          <li><a th:href="@{/admin/nhacungcap}">Quản lý nhà cung cấp</a></li>
+          <li><a th:href="@{/admin/kho}">Quản lý kho</a></li>
+          <li><a th:href="@{/admin/magiamgia}">Quản lý mã giảm giá</a></li>
+          <li><a th:href="@{/admin/baocao}">Báo cáo và thống kê</a></li>
+        </ul>
+      </aside>
+
+      <main class="main staff-page">
+        <header class="topbar">
+          <h1>Quản Lý Nguyên Liệu</h1>
+          <div
+            class="topbar-right"
+            style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            "
+          >
+            <div class="profile" style="position: relative">
+              <button
+                id="profileBtn"
+                class="profile-btn"
+                aria-expanded="false"
+                style="
+                  background: transparent;
+                  border: 0;
+                  color: inherit;
+                  cursor: pointer;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                "
+              >
+                Admin ▾
+              </button>
+              <div
+                id="profileMenu"
+                class="profile-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 38px;
+                  background: #fff;
+                  border: 1px solid #e6e6e6;
+                  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                  padding: 6px 0;
+                  border-radius: 6px;
+                  min-width: 140px;
+                  z-index: 40;
+                "
+              >
+                <a
+                  th:href="@{/profile}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Trang cá nhân</a
+                >
+                <a
+                  th:href="@{/truycap/Dangnhap.html}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Đăng xuất</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="page-header">
+          <div class="card">
+            <div class="filters">
+              <div class="search-wrap">
+                <input
+                  type="text"
+                  id="ingredientSearch"
+                  placeholder="Tìm kiếm nguyên liệu..."
+                />
+                <button
+                  class="search-btn"
+                  id="ingredientSearchBtn"
+                  aria-label="Tìm"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"
+                      stroke="#6f4e37"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 21l-4.35-4.35"
+                      stroke="#6f4e37"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <select id="ingredientStatusFilter">
+                <option value="">Tất cả</option>
+                <option value="Còn hàng">Còn hàng</option>
+                <option value="Sắp hết hàng">Sắp hết</option>
+                <option value="Vô hiệu">Vô hiệu</option>
+              </select>
+              <button id="addBtn">Thêm Nguyên Liệu</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="content">
+          <div class="box full">
+            <h3>Danh Sách Nguyên Liệu</h3>
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-error">
+              <span th:text="${errorMessage}"></span>
+            </div>
+            <table class="table-list">
+              <thead>
+                <tr>
+                  <th>Mã Nguyên Liệu</th>
+                  <th>Tên Nguyên Liệu</th>
+                  <th>Đơn Vị</th>
+                  <th>Tồn Kho</th>
+                  <th>Giá Nhập</th>
+                  <th>Nhà Cung Cấp</th>
+                  <th>Trạng Thái</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="nl : ${dsNguyenLieu}"
+                  th:attr="data-status=${nl.trangThai}"
+                >
+                  <td th:text="${nl.nguyenlieuId}"></td>
+                  <td th:text="${nl.tenNguyenLieu}"></td>
+                  <td th:text="${nl.donVi}"></td>
+                  <td th:text="${nl.slTon}"></td>
+                  <td
+                    th:text="${#numbers.formatDecimal(nl.giaNhap, 0, 'COMMA', 0, 'POINT')} + ' ₫'"
+                  ></td>
+                  <td th:text="${nl.tenNhaCungCap}"></td>
+
+                  <td>
+                    <span
+                      th:text="${nl.trangThai}"
+                      th:classappend="
+      ${nl.trangThai == 'Còn hàng'} ? 'status green' :
+      (${nl.trangThai == 'Sắp hết hàng'} ? 'status orange' : 'status red')
+    "
+                    >
+                    </span>
+                  </td>
+
+                  <td>
+                    <button
+                      class="btn-view open-view"
+                      th:data-id="${nl.nguyenlieuId}"
+                      th:data-ten="${nl.tenNguyenLieu}"
+                      th:data-donvi="${nl.donVi}"
+                      th:data-slton="${nl.slTon}"
+                      th:data-gianhap="${nl.giaNhap}"
+                      th:data-trangthai="${nl.trangThai}"
+                      th:data-nhacungcap="${nl.tenNhaCungCap}"
+                      th:data-nhacungcapid="${#lists.isEmpty(nl.dsCungCap) ? '' : nl.dsCungCap.get(0).nhaCungCap.nhacungcapId}"
+                    >
+                      Xem
+                    </button>
+                    <button
+                      class="btn-edit open-edit"
+                      th:data-id="${nl.nguyenlieuId}"
+                      th:data-ten="${nl.tenNguyenLieu}"
+                      th:data-donvi="${nl.donVi}"
+                      th:data-slton="${nl.slTon}"
+                      th:data-gianhap="${nl.giaNhap}"
+                      th:data-trangthai="${nl.trangThai}"
+                      th:data-nhacungcapid="${#lists.isEmpty(nl.dsCungCap) ? '' : nl.dsCungCap.get(0).nhaCungCap.nhacungcapId}"
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      class="btn-delete open-delete"
+                      th:data-id="${nl.nguyenlieuId}"
+                      th:data-ten="${nl.tenNguyenLieu}"
+                      th:data-delete-url="@{/admin/nguyenlieu/delete/{id}(id=${nl.nguyenlieuId})}"
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div
+              class="pagination"
+              th:if="${totalPages != null and totalPages > 0}"
+            >
+              <a
+                th:if="${currentPage > 0}"
+                th:href="@{/admin/nguyenlieu(page=${currentPage - 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >‹</a
+              >
+              <span
+                th:unless="${currentPage > 0}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >‹</span
+              >
+              <span class="current" th:text="${currentPage + 1}"></span>
+              <a
+                th:if="${currentPage + 1 < totalPages}"
+                th:href="@{/admin/nguyenlieu(page=${currentPage + 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >›</a
+              >
+              <span
+                th:unless="${currentPage + 1 < totalPages}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >›</span
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modal Thêm Nguyên Liệu -->
+    <div id="addStaffModal" class="modal-overlay">
+      <div class="modal modal-add">
+        <div class="modal-header">
+          <h2>Thêm Nguyên Liệu</h2>
+          <button class="close-btn" id="closeModal">×</button>
+        </div>
+
+        <form
+          th:action="@{/admin/nguyenlieu/add}"
+          th:object="${nguyenLieu}"
+          method="post"
+          class="modal-form"
+        >
+          <!-- Tên nguyên liệu -->
+          <div class="form-group">
+            <label>Tên nguyên liệu</label>
+            <input
+              type="text"
+              th:field="*{tenNguyenLieu}"
+              placeholder="Nhập tên nguyên liệu"
+              required
+            />
+          </div>
+
+          <!-- Nhà cung cấp -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nhà cung cấp</label>
+              <select name="nhaCungCapId" required>
+                <option value="">-- chọn --</option>
+                <option
+                  th:each="ncc : ${dsNhaCungCap}"
+                  th:value="${ncc.nhacungcapId}"
+                  th:text="${ncc.tenNhaCungCap}"
+                ></option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Đơn vị -->
+          <div class="form-group">
+            <label>Đơn vị</label>
+            <select th:field="*{donVi}" required>
+              <option value="">-- chọn --</option>
+              <option value="Kg">Kg</option>
+              <option value="lit">lit</option>
+              <option value="túi">túi</option>
+              <option value="Hộp">Hộp</option>
+            </select>
+          </div>
+
+          <!-- Giá trung bình -->
+          <div class="form-group">
+            <label>Giá trung bình</label>
+            <div class="money-field">
+              <input
+                type="number"
+                th:field="*{giaNhap}"
+                placeholder="Nhập số"
+                min="0"
+              />
+              <span>VND</span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelBtn">Hủy</button>
+            <button type="submit">Thêm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= MODAL XEM NGUYÊN LIỆU ================= -->
+    <div id="viewModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Chi Tiết Nguyên Liệu</h2>
+          <button class="close-btn" id="closeViewModal">×</button>
+        </div>
+
+        <div class="modal-body">
+          <p><b>Mã:</b> <span id="viewId"></span></p>
+          <p><b>Tên:</b> <span id="viewTen"></span></p>
+          <p><b>Đơn vị:</b> <span id="viewDonVi"></span></p>
+          <p><b>Tồn kho:</b> <span id="viewSlTon"></span></p>
+          <p><b>Giá nhập:</b> <span id="viewGiaNhap"></span></p>
+          <p><b>Nhà cung cấp:</b> <span id="viewNhaCungCap"></span></p>
+          <p><b>Trạng thái:</b> <span id="viewTrangThai"></span></p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="closeViewBtn">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL SỬA NGUYÊN LIỆU ================= -->
+    <div id="editModal" class="modal-overlay">
+      <div class="modal modal-add">
+        <div class="modal-header">
+          <h2>Sửa Nguyên Liệu</h2>
+          <button class="close-btn" id="closeEditModal">×</button>
+        </div>
+
+        <form
+          th:action="@{/admin/nguyenlieu/update}"
+          method="post"
+          class="modal-form"
+        >
+          <input type="hidden" name="nguyenlieuId" id="editId" />
+          <input type="hidden" name="slTon" id="editSlTon" />
+          <input type="hidden" name="trangThai" id="editTrangThai" />
+
+          <!-- Tên nguyên liệu -->
+          <div class="form-group">
+            <label>Tên nguyên liệu</label>
+            <input
+              type="text"
+              name="tenNguyenLieu"
+              id="editTen"
+              placeholder="Nhập tên nguyên liệu"
+              required
+            />
+          </div>
+
+          <!-- Nhà cung cấp -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nhà cung cấp</label>
+              <select name="nhaCungCapId" id="editNhaCungCapId" required>
+                <option value="">-- chọn --</option>
+                <option
+                  th:each="ncc : ${dsNhaCungCap}"
+                  th:value="${ncc.nhacungcapId}"
+                  th:text="${ncc.tenNhaCungCap}"
+                ></option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Đơn vị -->
+          <div class="form-group">
+            <label>Đơn vị</label>
+            <select name="donVi" id="editDonVi" required>
+              <option value="">-- chọn --</option>
+              <option value="Kg">Kg</option>
+              <option value="lit">lit</option>
+              <option value="túi">túi</option>
+              <option value="Hộp">Hộp</option>
+            </select>
+          </div>
+
+          <!-- Giá trung bình -->
+          <div class="form-group">
+            <label>Giá trung bình</label>
+            <div class="money-field">
+              <input
+                type="number"
+                name="giaNhap"
+                id="editGiaNhap"
+                placeholder="Nhập số"
+                min="0"
+              />
+              <span>VND</span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelEditBtn">
+              Hủy
+            </button>
+            <button type="submit">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= MODAL XÓA NGUYÊN LIỆU ================= -->
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Xác Nhận Xóa</h2>
+          <button class="close-btn" id="closeDeleteModal">×</button>
+        </div>
+
+        <form class="modal-body" method="get" id="deleteForm">
+          <input type="hidden" name="id" id="deleteId" />
+
+          <p>
+            Bạn có chắc muốn xóa nguyên liệu
+            <b id="deleteTen"></b> không?
+          </p>
+
+          <div class="modal-footer">
+            <button type="button" id="cancelDeleteBtn">Hủy</button>
+            <button type="submit" class="btn-delete">Xóa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script th:src="@{/js/admin-common.js(v=20260307a)}"></script>
+    <script th:src="@{/js/QuanlyNguyenlieu.js}"></script>
+  </body>
+</html>

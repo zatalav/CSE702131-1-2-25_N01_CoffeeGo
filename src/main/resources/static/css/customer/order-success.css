@@ -1,0 +1,130 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.success-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.success-card {
+  width: min(760px, 100%);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 40px 28px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+  text-align: center;
+}
+
+.success-icon {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 20px;
+  border-radius: 999px;
+  background: #34a853;
+  color: #ffffff;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 110px;
+}
+
+.success-card h1 {
+  margin: 0;
+  font-size: 56px;
+  line-height: 1.1;
+  color: #188038;
+}
+
+.success-subtitle {
+  margin: 20px 0 6px;
+  font-size: 24px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.success-desc {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.45;
+  color: #374151;
+}
+
+.order-summary {
+  margin: 32px auto 0;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 22px;
+  text-align: left;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 32px;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row strong {
+  color: #1f2937;
+}
+
+.continue-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 34px;
+  min-width: 420px;
+  background: #f97316;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  font-size: 28px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.continue-btn:hover {
+  background: #ea580c;
+}
+
+@media (max-width: 900px) {
+  .success-card h1 {
+    font-size: 36px;
+  }
+
+  .success-subtitle {
+    font-size: 22px;
+  }
+
+  .success-desc {
+    font-size: 18px;
+  }
+
+  .summary-row {
+    font-size: 18px;
+  }
+
+  .continue-btn {
+    min-width: 0;
+    width: 100%;
+    font-size: 24px;
+  }
+}

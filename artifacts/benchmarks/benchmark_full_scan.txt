@@ -1,0 +1,168 @@
+﻿ROUTES_SCANNED=76 STATIC_SCANNED=47
+
+TOP_SLOW_ROUND1
+
+Path                                 Status      Ms  Size
+----                                 ------      --  ----
+/kho/xuatkho/tao                     200    1464.31  4926
+/kho/nhapkho/tao                     200    1206.54  4615
+/admin/nhanvien                      200     819.34 36577
+/admin/nhacungcap                    200     445.75 12653
+/admin/coso                          200     431.49 11996
+/admin/donhang                       200     381.84  6664
+/admin/danhmuc                       200     378.17 10103
+/admin/khachhang                     200     362.78  6402
+/admin/magiamgia                     200     324.24 14339
+/kho/dashboard                       200     233.09  7105
+/js/QuanlyMagiamgia.js?v=20260303a   200      135.2  5646
+/kho/tonkho                          200     128.82  3983
+/kho/xuatkho                         200      83.04  7204
+/kho/nhapkho                         200      73.42  8157
+/admin/sanpham                       200      47.57 41046
+/                                    200      44.24  6790
+/admin/sanpham/add                   405      39.74 14312
+/admin/coso/update                   405      36.96 14312
+/nhanvien/giaohang/donhang           200      28.17  7938
+/admin/nguyenlieu                    200      24.96 15977
+/kho/xuatkho/delete                  405       24.9 14313
+/admin/baocao                        200      24.73  7050
+/admin/nhanvien/update               405      21.81 14316
+/css/Admin/dashboard.css(v=20260304b 404      21.65 13733
+/css/Admin/quanly.css(v=20260304b    404      21.48 13721
+
+
+
+TOP_SLOW_ROUND2
+
+Path                                            Status    Ms Size
+----                                            ------    -- ----
+/css/NhanVien.css/lichsudonhang.css(v=20260304b 200    58.71 7938
+/css/NhanVien.css/lichsudonhang.css(v=20260304c 200    35.99 7938
+/admin/sanpham                                  200    31.54 7938
+/css/NhanVienGiaoHang/giaohang.css(v=20260304c  200    29.22 7938
+/nhanvien/giaohang/donhang                      200    24.43 7938
+/admin/nhanvien                                 200    23.56 7938
+/admin/nhanvien/add                             200     22.9 7938
+/admin/danhmuc/delete                           200    22.29 7938
+/js/Quanlysanpham.js(v=20260306a                200    18.53 7938
+/admin/danhmuc/add                              200     17.4 7938
+/js/NhanVienGiaoHang/giaohang.js(v=20260304b    200    17.06 7938
+/js/admin-common.js(v=20260307a                 200    16.68 7938
+/kho/nhapkho/delete                             200    15.18 7938
+/js/NhanVienGiaoHang/giaohang.js(v=20260304c    200    14.56 7938
+/admin/kho                                      200    14.26 7938
+/css/NhanVien.css/lichsudonhang.css(v=20260304d 200    13.64 7938
+/kho/dashboard                                  200    13.33 7938
+/admin/nhacungcap                               200    13.04 7938
+/css/NhanVienGiaoHang/giaohang.css(v=20260304b  200    12.81 7938
+/admin/coso/add                                 200    12.66 7938
+/js/NhanVienGiaoHang/giaohang.js(v=20260304d    200    12.58 7938
+/js/Dashboard.js(v=20260305g                    200    12.38 7938
+/admin/coso                                     200    12.36 7938
+/admin/magiamgia/add                            200    12.16 7938
+/admin/sanpham/update                           200    12.06 7938
+
+
+
+NON200_PAGES
+
+Path                                            Round Status    Ms
+----                                            ----- ------    --
+/admin/coso/add                                     1 405    11.13
+/admin/coso/delete                                  1 405     10.8
+/admin/coso/update                                  1 405    36.96
+/admin/danhmuc/add                                  1 405     7.71
+/admin/danhmuc/delete                               1 405     9.32
+/admin/danhmuc/update                               1 405    19.82
+/admin/magiamgia/add                                1 405     14.3
+/admin/magiamgia/delete                             1 405     8.39
+/admin/magiamgia/update                             1 405     7.44
+/admin/nguyenlieu/add                               1 405    16.54
+/admin/nguyenlieu/update                            1 405     6.88
+/admin/nhacungcap/add                               1 405    13.01
+/admin/nhacungcap/delete                            1 405     8.38
+/admin/nhacungcap/update                            1 405     14.5
+/admin/nhanvien/add                                 1 405     8.82
+/admin/nhanvien/delete                              1 405     7.58
+/admin/nhanvien/update                              1 405    21.81
+/admin/sanpham/add                                  1 405    39.74
+/admin/sanpham/delete                               1 405     7.96
+/admin/sanpham/update                               1 405    10.07
+/css/Admin/dashboard.css(v=20260304b                1 404    21.65
+/css/Admin/dashboard.css(v=20260305f                1 404    10.06
+/css/Admin/quanly.css(v=20260304b                   1 404    21.48
+/css/NhanVien.css/lichsudonhang.css(v=20260304b     1 404     7.97
+/css/NhanVien.css/lichsudonhang.css(v=20260304c     1 404     8.58
+/css/NhanVien.css/lichsudonhang.css(v=20260304d     1 404     8.96
+/css/NhanVienGiaoHang/giaohang.css(v=20260304b      1 404    10.47
+/css/NhanVienGiaoHang/giaohang.css(v=20260304c      1 404     8.77
+/css/NhanVienGiaoHang/giaohang.css(v=20260304d      1 404      8.9
+/customer/profile/update                            1 405     6.98
+/js/admin-common.js(v=20260307a                     1 404     9.09
+/js/Dashboard.js(v=20260305g                        1 404     9.24
+/js/NhanVienGiaoHang/giaohang.js(v=20260304b        1 404     9.27
+/js/NhanVienGiaoHang/giaohang.js(v=20260304c        1 404     9.99
+/js/NhanVienGiaoHang/giaohang.js(v=20260304d        1 404     6.83
+/js/Quanly.js(v=20260306d                           1 404    13.25
+/js/Quanlysanpham.js(v=20260306a                    1 404    10.48
+/kho/nhapkho/create                                 1 405     9.12
+/kho/nhapkho/delete                                 1 405    14.87
+/kho/xuatkho/create                                 1 405    20.69
+/kho/xuatkho/delete                                 1 405     24.9
+
+
+
+STATIC_NO_CACHE_OR_NON200
+
+Path                                Status   Ms Size CacheControl
+----                                ------   -- ---- ------------
+\css\profile.css                    000    0.03    0             
+\css\Admin\dashboard.css            000    0.05    0             
+\css\Admin\quanly.css               000    0.02    0             
+\css\customer\checkout.css          000    0.02    0             
+\css\customer\menu.css              000    0.03    0             
+\css\customer\orders.css            000    0.02    0             
+\css\customer\profile.css           000    0.03    0             
+\css\customer\purchase.css          000    0.02    0             
+\css\kho\Danhsachtonkho.css         000    0.02    0             
+\css\kho\Dashboard.css              000    0.04    0             
+\css\kho\nhapkho.css                000    0.03    0             
+\css\kho\TaoPhieuNhapKho.css        000    0.04    0             
+\css\kho\TaoPhieuXuatKho.css        000    0.04    0             
+\css\kho\tonkho.css                 000    0.03    0             
+\css\kho\xuatkho.css                000    0.03    0             
+\css\NhanVien.css\donhang.css       000    0.04    0             
+\css\NhanVien.css\donhangkhach.css  000    0.03    0             
+\css\NhanVien.css\Khobep.css        000    0.03    0             
+\css\NhanVien.css\lichsudonhang.css 000    0.04    0             
+\css\NhanVienGiaoHang\giaohang.css  000    0.03    0             
+\js\admin-common.js                 000    0.02    0             
+\js\baocao.js                       000    0.04    0             
+\js\Dashboard.js                    000    0.03    0             
+\js\Quanly.js                       000    0.03    0             
+\js\Quanlycoso.js                   000    0.03    0             
+\js\QuanlyMagiamgia.js              000    0.02    0             
+\js\QuanlyNguyenlieu.js             000    0.03    0             
+\js\Quanlysanpham.js                000    0.03    0             
+\js\customer\checkout.js            000    0.03    0             
+\js\customer\menu.js                000    0.03    0             
+\js\customer\purchase.js            000    0.03    0             
+\js\kho\Danhsachtonkho.js           000    0.03    0             
+\js\kho\Dashboard.js                000    0.03    0             
+\js\kho\nhapkho.js                  000    0.03    0             
+\js\kho\TaoPhieuNhapKho.js          000    0.03    0             
+\js\kho\TaoPhieuXuatKho.js          000    0.03    0             
+\js\kho\tonkho.js                   000    0.03    0             
+\js\kho\xuatkho.js                  000    0.03    0             
+\js\nhanvien\donhang.js             000    0.03    0             
+\js\nhanvien\donhangkhach.js        000    0.03    0             
+\js\nhanvien\Khobep.js              000    0.03    0             
+\js\nhanvien\lichsudonhang.js       000    0.05    0             
+\js\NhanVienGiaoHang\giaohang.js    000    0.02    0             
+\truycap\Dangky.css                 000    0.02    0             
+\truycap\Dangky.js                  000    0.04    0             
+\truycap\Dangnhap.css               000    0.03    0             
+\truycap\Dangnhap.js                000    0.03    0             
+
+
+

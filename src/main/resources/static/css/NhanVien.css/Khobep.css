@@ -1,0 +1,124 @@
+.kitchen-page {
+  grid-template-columns: 90px 1fr;
+}
+
+.kitchen-page .order-main {
+  width: 100%;
+}
+
+.kitchen-page .kitchen-card {
+  width: 100%;
+}
+
+.kitchen-section {
+  margin-top: 16px;
+}
+
+.kitchen-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.kitchen-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kitchen-table th,
+.kitchen-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #eef2f7;
+  text-align: left;
+  font-size: 14px;
+}
+
+.kitchen-table th {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pill.ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pill.warning {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.status-pill.danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.empty-state {
+  padding: 16px 0 8px;
+  color: #94a3b8;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.action-btn:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.modal-footer #closeViewBtn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.modal-footer #closeViewBtn:hover {
+  background: #e2e8f0;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}

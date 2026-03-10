@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/truycap/Dangnhap.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <!-- Background Image -->
+      <div class="background-image">
+        <img
+          src="/img/z7463588836100_9c92ae464febb1ec2b21ec6ac60c6fce.jpg"
+          alt="Coffee background"
+        />
+      </div>
+
+      <!-- Dark Overlay -->
+      <div class="overlay"></div>
+
+      <!-- Login Card -->
+      <div class="login-card">
+        <!-- Close Button removed -->
+
+        <!-- Logo -->
+        <div class="logo">
+          <div class="logo-icon">
+            <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+              <path
+                d="M3.5 36.75V33.25H35V36.75H3.5ZM35 14V8.75H31.5V14H35ZM35 5.25C35.9283 5.25 36.8185 5.61875 37.4749 6.27513C38.1313 6.9315 38.5 7.82174 38.5 8.75V14C38.5 14.9283 38.1313 15.8185 37.4749 16.4749C36.8185 17.1313 35.9283 17.5 35 17.5H31.5V22.75C31.5 24.6065 30.7625 26.387 29.4497 27.6997C28.137 29.0125 26.3565 29.75 24.5 29.75H14C12.1435 29.75 10.363 29.0125 9.05025 27.6997C7.7375 26.387 7 24.6065 7 22.75V5.25H35ZM28 8.75H10.5V22.75C10.5 23.6783 10.8687 24.5685 11.5251 25.2249C12.1815 25.8813 13.0717 26.25 14 26.25H24.5C25.4283 26.25 26.3185 25.8813 26.9749 25.2249C27.6313 24.5685 28 23.6783 28 22.75V8.75Z"
+                fill="white"
+              />
+            </svg>
+          </div>
+          <span class="logo-text">CoffeeGo</span>
+        </div>
+
+        <!-- Welcome Text -->
+        <h1 class="welcome-text">Welcome Back!</h1>
+
+        <!-- Login Form -->
+        <form class="login-form" id="loginForm" method="post" action="/login">
+          <!-- Username Input -->
+          <div class="input-wrapper">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M10 3.33333C10.8841 3.33333 11.7319 3.68452 12.357 4.30964C12.9821 4.93477 13.3333 5.78261 13.3333 6.66667C13.3333 7.55072 12.9821 8.39857 12.357 9.02369C11.7319 9.64881 10.8841 10 10 10C9.11595 10 8.2681 9.64881 7.64298 9.02369C7.01786 8.39857 6.66667 7.55072 6.66667 6.66667C6.66667 5.78261 7.01786 4.93477 7.64298 4.30964C8.2681 3.68452 9.11595 3.33333 10 3.33333ZM10 11.6667C13.6833 11.6667 16.6667 13.1583 16.6667 15V16.6667H3.33333V15C3.33333 13.1583 6.31667 11.6667 10 11.6667Z"
+                  fill="white"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              name="username"
+              class="form-input"
+              placeholder="Email hoặc SĐT"
+              id="username"
+              required
+            />
+          </div>
+
+          <!-- Password Input -->
+          <div class="input-wrapper">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M10 14.1667C10.442 14.1667 10.866 13.9911 11.1785 13.6785C11.4911 13.366 11.6667 12.942 11.6667 12.5C11.6667 12.058 11.4911 11.634 11.1785 11.3215C10.866 11.0089 10.442 10.8333 10 10.8333C9.55797 10.8333 9.13405 11.0089 8.82149 11.3215C8.50893 11.634 8.33333 12.058 8.33333 12.5C8.33333 12.942 8.50893 13.366 8.82149 13.6785C9.13405 13.9911 9.55797 14.1667 10 14.1667ZM15 6.66667C15.442 6.66667 15.866 6.84226 16.1785 7.15482C16.4911 7.46738 16.6667 7.89131 16.6667 8.33333V16.6667C16.6667 17.1087 16.4911 17.5326 16.1785 17.8452C15.866 18.1577 15.442 18.3333 15 18.3333H5C4.55797 18.3333 4.13405 18.1577 3.82149 17.8452C3.50893 17.5326 3.33333 17.1087 3.33333 16.6667V8.33333C3.33333 7.89131 3.50893 7.46738 3.82149 7.15482C4.13405 6.84226 4.55797 6.66667 5 6.66667H5.83333V5C5.83333 3.89493 6.27232 2.83512 7.05372 2.05372C7.83512 1.27232 8.89493 0.833334 10 0.833334C10.5472 0.833334 11.089 0.941108 11.5945 1.1505C12.1 1.3599 12.5594 1.66681 12.9463 2.05372C13.3332 2.44063 13.6401 2.89996 13.8495 3.40549C14.0589 3.91101 14.1667 4.45283 14.1667 5V6.66667H15ZM10 2.5C9.33696 2.5 8.70107 2.76339 8.23223 3.23223C7.76339 3.70107 7.5 4.33696 7.5 5V6.66667H12.5V5C12.5 4.33696 12.2366 3.70107 11.7678 3.23223C11.2989 2.76339 10.663 2.5 10 2.5Z"
+                  fill="white"
+                  fill-opacity="0.7"
+                />
+              </svg>
+            </div>
+            <input
+              type="password"
+              name="password"
+              class="form-input"
+              placeholder="Password"
+              id="password"
+              required
+            />
+          </div>
+
+          <!-- Remember me & Forgot password -->
+          <div class="form-options">
+            <a href="/forgot-password" class="forgot-password"
+              >Forgot password?</a
+            >
+          </div>
+
+          <!-- Login Button -->
+          <button type="submit" class="login-btn">Login</button>
+
+          <!-- Sign up link -->
+          <p class="signup-text">
+            Don't have an account?
+            <a href="/register" class="signup-link">Sign up</a>
+          </p>
+
+          <!-- Social Login -->
+          <div class="social-login">
+            <button type="button" class="social-btn google-btn">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M19.9905 10.1871C19.9905 9.36775 19.9224 8.76985 19.7752 8.14981H10.1992V11.8479H15.8201C15.7068 12.7669 15.0948 14.151 13.7349 15.081L13.7159 15.2048L16.7436 17.4965L16.9534 17.5169C18.8798 15.7786 19.9905 13.2209 19.9905 10.1871Z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M10.1992 19.9307C12.953 19.9307 15.2648 19.0449 16.9534 17.5169L13.7349 15.081C12.8737 15.6678 11.7177 16.0775 10.1992 16.0775C7.50211 16.0775 5.21297 14.3392 4.39695 11.9365L4.27734 11.9464L1.12906 14.327L1.08789 14.4388C2.76508 17.694 6.21016 19.9307 10.1992 19.9307Z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M4.39695 11.9365C4.18164 11.3165 4.05703 10.6521 4.05703 9.96565C4.05703 9.27913 4.18164 8.61482 4.38563 7.99478L4.37992 7.86273L1.19219 5.44394L1.08789 5.49241C0.396641 6.84325 0 8.36018 0 9.96565C0 11.5711 0.396641 13.088 1.08789 14.4388L4.39695 11.9365Z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M10.1992 3.85375C12.1144 3.85375 13.4063 4.66202 14.1429 5.33747L17.0213 2.59154C15.2535 0.986061 12.953 0.000625 10.1992 0.000625C6.21016 0.000625 2.76508 2.23721 1.08789 5.49243L4.38563 7.99479C5.21297 5.59212 7.50211 3.85375 10.1992 3.85375Z"
+                  fill="#EB4335"
+                />
+              </svg>
+            </button>
+            <button type="button" class="social-btn facebook-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C15.9164 21.5878 18.0622 20.3855 19.6099 18.5701C21.1576 16.7546 22.0053 14.4456 22 12.06C22 6.53 17.5 2.04 12 2.04Z"
+                  fill="white"
+                />
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

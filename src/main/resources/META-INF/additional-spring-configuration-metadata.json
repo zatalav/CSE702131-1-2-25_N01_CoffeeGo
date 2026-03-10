@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "cloudinary.cloud-name",
+      "type": "java.lang.String",
+      "description": "Cloudinary cloud name."
+    },
+    {
+      "name": "cloudinary.api-key",
+      "type": "java.lang.String",
+      "description": "Cloudinary API key."
+    },
+    {
+      "name": "cloudinary.api-secret",
+      "type": "java.lang.String",
+      "description": "Cloudinary API secret."
+    },
+    {
+      "name": "cloudinary.upload-preset",
+      "type": "java.lang.String",
+      "description": "Default Cloudinary upload preset."
+    },
+    {
+      "name": "google.maps.api.key",
+      "type": "java.lang.String",
+      "description": "Google Maps API key used for shipping distance lookup."
+    },
+    {
+      "name": "vnpay.tmn-code",
+      "type": "java.lang.String",
+      "description": "VNPAY merchant terminal code."
+    },
+    {
+      "name": "vnpay.hash-secret",
+      "type": "java.lang.String",
+      "description": "VNPAY hash secret used for signature verification."
+    },
+    {
+      "name": "vnpay.pay-url",
+      "type": "java.lang.String",
+      "description": "VNPAY payment gateway URL."
+    },
+    {
+      "name": "vnpay.return-url",
+      "type": "java.lang.String",
+      "description": "Callback URL to receive payment return from VNPAY."
+    }
+  ]
+}

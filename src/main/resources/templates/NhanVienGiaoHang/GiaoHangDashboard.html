@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard Giao Hàng</title>
+    <link
+      rel="stylesheet"
+      th:href="@{/css/NhanVien.css/lichsudonhang.css(v=20260304c)}"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/css/NhanVienGiaoHang/giaohang.css(v=20260304c)}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="history-shell">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand"><span class="brand-text">coffee</span></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item active" th:href="@{/nhanvien/giaohang}">
+            <span class="nav-icon">🚚</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/giaohang/donhang}">
+            <span class="nav-icon">📦</span>
+            <span class="nav-label">
+              <span class="nav-line">Đơn giao</span>
+              <span class="nav-line">vận chuyển</span>
+            </span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="history-main">
+        <header class="history-topbar">
+          <div class="history-title">Dashboard Nhân Viên Vận Chuyển</div>
+          <div class="topbar-actions">
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ☰
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="cards-grid">
+          <article class="stat-card">
+            <div class="label">Đơn đã xác nhận chờ nhận</div>
+            <div class="value" th:text="${stats['confirmed']}">0</div>
+          </article>
+          <article class="stat-card">
+            <div class="label">Đơn đang giao của bạn</div>
+            <div class="value" th:text="${stats['delivering']}">0</div>
+          </article>
+          <article class="stat-card">
+            <div class="label">Đơn đã hoàn thành của bạn</div>
+            <div class="value" th:text="${stats['completed']}">0</div>
+          </article>
+        </section>
+
+        <section class="dashboard-grid">
+          <div
+            class="chart-card"
+            id="deliveryChartBox"
+            th:attr="
+              data-chart-url=@{/nhanvien/giaohang/chart-data},
+              data-seed-delivering=${stats['delivering']},
+              data-seed-completed=${stats['completed']}
+            "
+          >
+            <div class="section-title" style="margin: 0 0 8px">
+              Biểu đồ đơn hàng (tròn)
+            </div>
+            <div class="chart-filters under-title">
+              <select id="chartPeriod">
+                <option value="month" selected>Theo tháng</option>
+                <option value="year">Theo năm</option>
+              </select>
+              <select id="chartMonth">
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+              </select>
+              <input
+                id="chartYear"
+                type="number"
+                min="2020"
+                max="2100"
+                placeholder="Năm"
+              />
+              <button id="chartApplyBtn" class="action-btn take" type="button">
+                Xem
+              </button>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="deliveryPieChart" height="240"></canvas>
+            </div>
+            <div id="chartCaption" class="chart-caption"></div>
+          </div>
+
+          <div class="table-card">
+            <div class="section-title" style="margin: 0 0 10px">
+              Đơn hàng có thể nhận để giao
+            </div>
+            <table class="history-table compact">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>SĐT</th>
+                  <th>Địa chỉ</th>
+                  <th>Tổng tiền</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:if="${availableOrders == null || #lists.isEmpty(availableOrders)}"
+                >
+                  <td colspan="6" class="empty-cell">
+                    Hiện chưa có đơn hàng chờ nhận giao.
+                  </td>
+                </tr>
+                <tr th:each="o : ${availableOrders}">
+                  <td th:text="${o.code}"></td>
+                  <td th:text="${o.name}"></td>
+                  <td th:text="${o.phone}"></td>
+                  <td th:text="${o.address}"></td>
+                  <td th:text="${o.total}"></td>
+                  <td>
+                    <form th:action="@{/nhanvien/giaohang/nhan}" method="post">
+                      <input
+                        type="hidden"
+                        name="orderId"
+                        th:value="${o.code}"
+                      />
+                      <button class="action-btn take" type="submit">
+                        Nhận
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script th:src="@{/js/NhanVienGiaoHang/giaohang.js(v=20260304c)}"></script>
+  </body>
+</html>

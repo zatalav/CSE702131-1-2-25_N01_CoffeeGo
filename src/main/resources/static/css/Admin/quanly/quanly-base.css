@@ -1,0 +1,260 @@
+﻿.page-header .card {
+  background: transparent;
+  box-shadow: none;
+  padding: 0 0 16px 0;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.filters #addBtn {
+  margin-left: auto;
+}
+
+.filters input,
+.filters select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #dadada; /* VIá»€N RÃ• */
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* BÃ“NG NHáº¸ */
+  font-size: 13px;
+}
+
+.search-wrap {
+  position: relative;
+  display: block;
+}
+
+.search-wrap input {
+  padding: 10px 12px;
+  padding-right: 46px; /* space for the icon inside */
+  border-radius: 8px;
+  border: 1px solid #dadada;
+  background: #fff;
+  min-width: 240px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 0;
+  background: transparent; /* no box/frame */
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+.report-filters .filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Report layout helpers moved from inline HTML */
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 16px;
+}
+
+.metrics-row {
+  padding: 18px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 12px;
+}
+.metric-large {
+  flex: 1;
+  background: #e8f6ef;
+  padding: 12px;
+  border-radius: 8px;
+}
+.metric-small {
+  flex: 0 0 140px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eef2f7;
+}
+.metric-yellow {
+  background: #fff4e6;
+}
+.metric-pink {
+  background: #fdeef0;
+}
+
+.chart-card {
+  height: 320px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+.card-padding {
+  padding: 18px;
+}
+.product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-btn svg path {
+  stroke: #6f4e37;
+}
+
+.filters button#addBtn {
+  background: #438e78;
+  color: #fff;
+  padding: 10px 14px;
+  border: 1px solid #21453a;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.box.full {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #dadada; /* VIá»€N */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); /* BÃ“NG */
+}
+
+.table-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Orders table column alignment */
+.orders-page .table-list {
+  table-layout: fixed;
+}
+
+.orders-page .table-list th,
+.orders-page .table-list td {
+  vertical-align: middle;
+}
+
+.orders-page .table-list th:nth-child(1),
+.orders-page .table-list td:nth-child(1) {
+  width: 14%;
+}
+
+.orders-page .table-list th:nth-child(2),
+.orders-page .table-list td:nth-child(2) {
+  width: 10%;
+}
+
+.orders-page .table-list th:nth-child(3),
+.orders-page .table-list td:nth-child(3) {
+  width: 14%;
+}
+
+.orders-page .table-list th:nth-child(4),
+.orders-page .table-list td:nth-child(4) {
+  width: 14%;
+}
+
+.orders-page .table-list th:nth-child(5),
+.orders-page .table-list td:nth-child(5) {
+  width: 16%;
+}
+
+.orders-page .table-list th:nth-child(6),
+.orders-page .table-list td:nth-child(6) {
+  width: 14%;
+}
+
+.orders-page .table-list th:nth-child(7),
+.orders-page .table-list td:nth-child(7) {
+  width: 10%;
+}
+
+.table-list thead th {
+  text-align: left;
+  padding: 16px;
+  background: #f3f4f6; /* ná»n Ä‘áº­m hÆ¡n */
+  border-bottom: 1px solid #dadada; /* Ä‘Æ°á»ng phÃ¢n cÃ¡ch */
+}
+.table-list tbody tr:hover {
+  background: #eef0f3;
+}
+
+.table-list tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #f0ece8;
+}
+
+/* keep order table columns left-aligned for text fields */
+.orders-page .table-list th:nth-child(3),
+.orders-page .table-list td:nth-child(3),
+.orders-page .table-list th:nth-child(4),
+.orders-page .table-list td:nth-child(4),
+.orders-page .table-list th:nth-child(6),
+.orders-page .table-list td:nth-child(6) {
+  text-align: left;
+}
+
+/* remove underline on action links */
+.orders-page .table-list .action-btn {
+  text-decoration: none;
+}
+
+/* admin kho action buttons */
+.staff-page .table-list .action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin-right: 6px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.staff-page .table-list .action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+  filter: brightness(1.05);
+}
+
+.staff-page .table-list .action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.staff-page .table-list .action-btn.view {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+.staff-page .table-list .action-btn.edit {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+}
+
+.staff-page .table-list .action-btn.delete {
+  background: linear-gradient(135deg, #ef4444, #f43f5e);
+}
+
+.pagination {

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chi Tiết Giao Hàng</title>
+    <link
+      rel="stylesheet"
+      th:href="@{/css/NhanVien.css/lichsudonhang.css(v=20260304b)}"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/css/NhanVienGiaoHang/giaohang.css(v=20260304b)}"
+    />
+  </head>
+  <body>
+    <div class="history-shell">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand"><span class="brand-text">coffee</span></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/nhanvien/giaohang}">
+            <span class="nav-icon">🚚</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item active" th:href="@{/nhanvien/giaohang/donhang}">
+            <span class="nav-icon">📦</span>
+            <span class="nav-label">Đơn giao</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="history-main">
+        <header class="history-topbar">
+          <div class="history-title">Chi tiết đơn giao hàng</div>
+          <div class="topbar-actions">
+            <a
+              class="action-btn detail"
+              style="text-decoration: none"
+              th:href="@{/nhanvien/giaohang/donhang}"
+              >← Quay lại</a
+            >
+          </div>
+        </header>
+
+        <div class="detail-layout" th:if="${order != null}">
+          <section class="detail-card">
+            <div class="detail-row">
+              <span>Mã đơn</span><strong th:text="${order.donhang_id}"></strong>
+            </div>
+            <div class="detail-row">
+              <span>Khách hàng</span
+              ><strong
+                th:text="${order.khachHang != null ? order.khachHang.ten_KH : ''}"
+              ></strong>
+            </div>
+            <div class="detail-row">
+              <span>Số điện thoại</span
+              ><strong
+                th:text="${order.khachHang != null ? order.khachHang.SDT : ''}"
+              ></strong>
+            </div>
+            <div class="detail-row">
+              <span>Địa chỉ giao</span
+              ><strong
+                th:text="${order.dia_chi_giao != null && !order.dia_chi_giao.isEmpty() ? order.dia_chi_giao : (order.khachHang != null ? order.khachHang.dia_chi : '')}"
+              ></strong>
+            </div>
+            <div class="detail-row">
+              <span>Thời gian đặt</span
+              ><strong
+                th:text="${order.ngay_dat != null ? #temporals.format(order.ngay_dat, 'dd/MM/yyyy HH:mm') : ''}"
+              ></strong>
+            </div>
+            <div class="detail-row">
+              <span>Tổng tiền</span
+              ><strong
+                th:text="${#numbers.formatDecimal(order.tong_tien, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></strong>
+            </div>
+            <div class="detail-row">
+              <span>Trạng thái</span
+              ><strong
+                ><span
+                  class="status-pill delivering"
+                  th:text="${order.trang_thai}"
+                ></span
+              ></strong>
+            </div>
+            <div class="detail-row">
+              <span>Thanh toán</span><strong th:text="${paymentLabel}"></strong>
+            </div>
+            <div class="detail-row">
+              <span>Ghi chú</span
+              ><strong
+                th:text="${customerNote != null && !customerNote.isEmpty() ? customerNote : '(trống)'}"
+              ></strong>
+            </div>
+
+            <div
+              class="detail-items"
+              th:if="${orderItems != null && !orderItems.isEmpty()}"
+            >
+              <div class="section-title">Sản phẩm trong đơn</div>
+              <div class="detail-item" th:each="it : ${orderItems}">
+                <div class="left">
+                  <strong
+                    th:text="${it.sanPham != null ? it.sanPham.tenSp : ''}"
+                  ></strong>
+                  <span
+                    th:text="'Size: ' + ${it.size == null ? 'M' : it.size}"
+                  ></span>
+                  <span th:text="'SL: ' + ${it.SL}"></span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-card">
+            <div class="section-title">Vị trí giao hàng (Google Map)</div>
+            <iframe
+              class="map-frame"
+              th:if="${mapQuery != null && !mapQuery.isEmpty()}"
+              th:src="@{'https://www.google.com/maps?q=' + ${mapQuery} + '&output=embed'}"
+              loading="lazy"
+            ></iframe>
+            <div th:if="${mapQuery == null || mapQuery.isEmpty()}">
+              Không có địa chỉ để hiển thị bản đồ.
+            </div>
+            <div class="map-actions">
+              <a
+                class="map-link"
+                th:if="${mapUrl != null && !mapUrl.isEmpty()}"
+                th:href="${mapUrl}"
+                target="_blank"
+                >Mở Google Map</a
+              >
+              <button
+                id="routeFromMeBtn"
+                type="button"
+                class="action-btn detail"
+                th:if="${order.khachHang != null && order.khachHang.dia_chi != null && !order.khachHang.dia_chi.isEmpty()}"
+                th:attr="data-destination=${order.khachHang.dia_chi}"
+              >
+                Chỉ đường ngắn nhất từ vị trí của tôi
+              </button>
+            </div>
+
+            <form
+              th:action="@{/nhanvien/giaohang/hoanthanh}"
+              method="post"
+              style="margin-top: 16px"
+            >
+              <input
+                type="hidden"
+                name="orderId"
+                th:value="${order.donhang_id}"
+              />
+              <button class="action-btn complete" type="submit">
+                Đánh dấu đã hoàn thành
+              </button>
+            </form>
+
+            <form
+              class="cancel-order-form"
+              th:action="@{/nhanvien/giaohang/huy}"
+              method="post"
+              style="margin-top: 12px"
+            >
+              <input
+                type="hidden"
+                name="orderId"
+                th:value="${order.donhang_id}"
+              />
+              <div style="display: grid; gap: 8px; max-width: 420px">
+                <label for="cancelReasonSelect"
+                  ><strong>Lý do hủy đơn</strong></label
+                >
+                <select id="cancelReasonSelect" name="reason" required>
+                  <option value="" disabled selected>-- Chọn lý do --</option>
+                  <option value="Khách không nhận hàng">
+                    Khách không nhận hàng
+                  </option>
+                  <option value="Khách yêu cầu hủy">Khách yêu cầu hủy</option>
+                  <option value="KHAC">Khác</option>
+                </select>
+                <input
+                  type="text"
+                  id="cancelReasonOther"
+                  name="otherReason"
+                  placeholder="Nhập lý do khác"
+                  style="display: none"
+                />
+                <button class="action-btn cancel" type="submit">Hủy đơn</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script th:src="@{/js/NhanVienGiaoHang/giaohang.js(v=20260304b)}"></script>
+  </body>
+</html>

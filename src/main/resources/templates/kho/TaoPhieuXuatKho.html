@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tạo Phiếu Xuất Kho</title>
+    <link rel="stylesheet" th:href="@{/css/kho/taophieuxuatkho.css}" />
+  </head>
+  <body>
+    <div class="kho-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-text">Coffee Shop</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/kho/dashboard}">
+            <span class="nav-icon">▦</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/nhapkho}">
+            <span class="nav-icon">⬇</span>
+            <span>Nhập Kho</span>
+          </a>
+          <a class="nav-item active" th:href="@{/kho/xuatkho}">
+            <span class="nav-icon">⬆</span>
+            <span>Xuất Kho</span>
+          </a>
+          <a class="nav-item" href="#">
+            <span class="nav-icon">≣</span>
+            <span>Danh Sách Tồn Kho</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a class="nav-item" href="#">
+            <span class="nav-icon">⎋</span>
+            <span>Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <h1>Xuất Kho</h1>
+          </div>
+          <div class="topbar-user">
+            <div class="user-info">
+              <p class="user-name" th:text="${currentUserName}">
+                Lê Quốc Trinh
+              </p>
+              <p class="user-role" th:text="${currentUserRole}">
+                Nhân viên kho
+              </p>
+            </div>
+            <img
+              class="user-avatar"
+              src="https://i.pravatar.cc/80?img=12"
+              alt="Avatar"
+            />
+            <button class="icon-btn" type="button">🔔</button>
+            <button class="icon-btn" type="button">⋯</button>
+          </div>
+        </header>
+
+        <section class="form-card">
+          <h2>Tạo Phiếu Xuất Kho Mới</h2>
+          <form
+            class="form-body"
+            th:action="@{/kho/xuatkho/create}"
+            method="post"
+          >
+            <div class="form-row">
+              <div class="form-group">
+                <label>Mã Phiếu</label>
+                <input
+                  type="text"
+                  name="maPhieu"
+                  th:value="${maPhieu}"
+                  readonly
+                />
+              </div>
+              <div class="form-group">
+                <label>Ngày Xuất</label>
+                <input
+                  type="text"
+                  name="ngayXuat"
+                  th:value="${#temporals.format(today, 'dd/MM/yyyy')}"
+                  placeholder="dd/MM/yyyy"
+                  pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}"
+                  title="Nhập ngày theo định dạng dd/MM/yyyy"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cơ sở</label>
+                <select name="cosoId" required>
+                  <option value="">-- Chọn cơ sở --</option>
+                  <option
+                    th:each="cs : ${dsCoSo}"
+                    th:value="${cs.cosoId}"
+                    th:text="${cs.tenCs}"
+                  ></option>
+                </select>
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <div class="detail-header">
+                <span>Nguyên Liệu</span>
+                <span>Nhà Cung Cấp (tùy chọn)</span>
+                <span>Đơn Vị</span>
+                <span>Số Lượng</span>
+                <span>Giá Nhập</span>
+                <span></span>
+              </div>
+              <div id="detailBody"></div>
+
+              <button type="button" class="btn btn-secondary" id="addRowBtn">
+                + Thêm Nguyên Liệu
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label>Ghi Chú</label>
+              <textarea name="ghiChu" rows="4"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <a class="btn btn-light" th:href="@{/kho/xuatkho}">Hủy</a>
+              <button class="btn btn-primary" type="submit">
+                Tạo Phiếu Xuất Kho
+              </button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script th:inline="javascript">
+      window.KHO_MASTER_DATA_URL =
+        /*[[@{/kho/master-data}]]*/ "/kho/master-data";
+      window.DS_NGUYEN_LIEU = [];
+      window.DS_NHA_CUNG_CAP = [];
+      window.MAP_NGUYENLIEU_NCC = {};
+      window.MAP_TENNGUYENLIEU_NCC = {};
+      window.MAP_NCC_TENNGUYENLIEU = {};
+    </script>
+    <script
+      th:src="@{/js/kho/TaoPhieuXuatKho.js(v=20260308-initfix1)}"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Chi tiết đơn hàng</title>
+    <link rel="stylesheet" href="/css/customer/orders.css?v=20260303d" />
+  </head>
+  <body>
+    <div class="orders-page">
+      <header class="orders-header">
+        <a class="back-link" th:href="@{/customer/orders(kh=${customerId})}"
+          >← Quay lại đơn hàng</a
+        >
+        <h1>Chi tiết đơn hàng</h1>
+      </header>
+
+      <section class="order-detail-card" th:if="${order != null}">
+        <div class="detail-row">
+          <span>Mã đơn</span>
+          <strong th:text="${order.donhang_id}"></strong>
+        </div>
+        <div class="detail-row">
+          <span>Thời gian đặt</span>
+          <strong
+            th:text="${order.ngay_dat != null ? #temporals.format(order.ngay_dat, 'dd/MM/yyyy HH:mm') : ''}"
+          ></strong>
+        </div>
+        <div class="detail-row">
+          <span>Trạng thái</span>
+          <strong th:text="${order.trang_thai}"></strong>
+        </div>
+        <div class="detail-row">
+          <span>Tổng tiền</span>
+          <strong
+            th:text="${#numbers.formatDecimal(order.tong_tien, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+          ></strong>
+        </div>
+        <div
+          class="detail-row"
+          th:if="${order.ghi_chu != null && !order.ghi_chu.isEmpty()}"
+        >
+          <span>Ghi chú</span>
+          <strong th:text="${order.ghi_chu}"></strong>
+        </div>
+      </section>
+
+      <section
+        class="order-detail-card"
+        th:if="${orderItems != null && !orderItems.isEmpty()}"
+      >
+        <h3>Danh sách sản phẩm</h3>
+        <div class="detail-items">
+          <div class="detail-item" th:each="it : ${orderItems}">
+            <div class="item-col">
+              <strong
+                th:text="${it.sanPham != null ? it.sanPham.tenSp : ''}"
+              ></strong>
+              <small
+                th:text="'Size: ' + ${it.size == null ? 'M' : it.size}"
+              ></small>
+              <small
+                th:if="${(it.sugar != null && !it.sugar.isEmpty()) || (it.ice != null && !it.ice.isEmpty()) || (it.milk != null && !it.milk.isEmpty()) || (it.note != null && !it.note.isEmpty())}"
+                th:text="
+                  'Đường: ' + (it.sugar == null || it.sugar.isEmpty() ? '-' : it.sugar)
+                  + ' | Đá: ' + (it.ice == null || it.ice.isEmpty() ? '-' : it.ice)
+                  + ' | Sữa: ' + (it.milk == null || it.milk.isEmpty() ? '-' : it.milk)
+                  + ' | Ghi chú: ' + (it.note == null || it.note.isEmpty() ? '-' : it.note)
+                "
+              ></small>
+            </div>
+            <div class="item-col right">
+              <span th:text="'SL: ' + ${it.SL}"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="orders-list"
+        th:if="${orderItems == null || orderItems.isEmpty()}"
+      >
+        <p>Đơn hàng chưa có sản phẩm.</p>
+      </section>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Đơn hàng</title>
+    <link rel="stylesheet" href="/css/customer/orders.css?v=20260303d" />
+  </head>
+  <body>
+    <div class="orders-page">
+      <header class="orders-header">
+        <a class="back-link" th:href="@{/customer/menu(kh=${customerId})}"
+          >← Quay lại</a
+        >
+        <h1>Đơn hàng của tôi</h1>
+      </header>
+
+      <section
+        class="orders-list"
+        th:if="${orders != null && !orders.isEmpty()}"
+      >
+        <a
+          class="order-card"
+          th:each="dh : ${orders}"
+          th:href="@{/customer/orders/detail(kh=${customerId},id=${dh.donhang_id})}"
+        >
+          <div class="order-left">
+            <strong class="order-id" th:text="${dh.donhang_id}"></strong>
+            <small
+              class="order-time"
+              th:text="${#temporals.format(dh.ngay_dat, 'dd/MM/yyyy HH:mm')}"
+            ></small>
+          </div>
+          <div class="order-right">
+            <span class="order-status" th:text="${dh.trang_thai}"></span>
+            <strong
+              class="order-total"
+              th:text="${#numbers.formatDecimal(dh.tong_tien, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></strong>
+          </div>
+        </a>
+      </section>
+
+      <section
+        class="orders-list"
+        th:if="${orders == null || orders.isEmpty()}"
+      >
+        <p>Chưa có đơn hàng.</p>
+      </section>
+    </div>
+  </body>
+</html>

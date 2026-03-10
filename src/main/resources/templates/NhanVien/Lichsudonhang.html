@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lịch Sử Đơn Hàng</title>
+    <link rel="stylesheet" th:href="@{/css/NhanVien.css/lichsudonhang.css}" />
+  </head>
+  <body>
+    <div class="history-shell">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-text">coffee</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/nhanvien/donhang}">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Đặt Hàng</span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/donhang-khach}">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Đơn Hàng</span>
+          </a>
+          <a class="nav-item active" th:href="@{/nhanvien/lichsu-donhang}">
+            <span class="nav-icon">🕘</span>
+            <span class="nav-label">
+              <span class="nav-line">Lịch Sử</span>
+              <span class="nav-line">Đơn Hàng</span>
+            </span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/khobep}">
+            <span class="nav-icon">🍳</span>
+            <span class="nav-label">Kho Bếp</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="history-main">
+        <header class="history-topbar">
+          <div class="history-title">Lịch Sử Đơn Hàng</div>
+          <div class="topbar-actions">
+            <div class="search-box">
+              <input type="text" placeholder="Search orders..." />
+              <span class="search-icon">🔍</span>
+            </div>
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ☰
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Mã Đơn</th>
+              <th>Phân Loại</th>
+              <th>Tên</th>
+              <th>Tổng Tiền</th>
+              <th>Trạng Thái</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="o : ${orders}">
+              <td th:text="${o.time}"></td>
+              <td th:text="${o.code}"></td>
+              <td>
+                <span
+                  class="badge"
+                  th:classappend="${o.typeBadge == 'NV'} ? ' nv' : ' kh'"
+                  th:text="${o.typeBadge}"
+                ></span>
+              </td>
+              <td th:text="${o.name}"></td>
+              <td th:text="${o.total}"></td>
+              <td>
+                <span
+                  class="status-pill"
+                  th:classappend="${o.statusValue == 'Đã hủy'} ? ' cancelled' : (${o.statusValue == 'Thành công'} ? '' : ' pending')"
+                  th:text="${o.status}"
+                ></span>
+              </td>
+              <td>
+                <button
+                  class="action-btn open-cancel"
+                  th:data-id="${o.code}"
+                  th:disabled="${o.statusValue == 'Đã hủy'}"
+                >
+                  Hủy đơn
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pagination">
+          <button class="page-btn">‹</button>
+          <button class="page-btn">1</button>
+          <button class="page-btn">›</button>
+        </div>
+      </main>
+    </div>
+
+    <div id="cancelModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Hủy đơn hàng</h3>
+          <button id="closeCancelModal">×</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="cancelOrderId" />
+          <label>Lý do hủy</label>
+          <select id="cancelReason">
+            <option value="">Chọn lý do</option>
+            <option value="Khách hàng yêu cầu hủy">
+              Khách hàng yêu cầu hủy
+            </option>
+            <option value="Sai đơn hàng">Sai đơn hàng</option>
+            <option value="Lý do khác">Lý do khác</option>
+          </select>
+          <textarea
+            id="cancelNote"
+            rows="3"
+            placeholder="Ghi chú thêm..."
+          ></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel" id="cancelCloseBtn" type="button">Đóng</button>
+          <button class="confirm" id="confirmCancelBtn" type="button">
+            Xác nhận
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/js/nhanvien/lichsudonhang.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tạo Đơn Hàng</title>
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/NhanVien.css/donhang.css}" />
+  </head>
+
+  <body>
+    <div class="order-shell">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-text">coffee</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/nhanvien/donhang}">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Đặt Hàng</span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/donhang-khach}">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Đơn Hàng</span>
+          </a>
+          <a class="nav-item nav-history" th:href="@{/nhanvien/lichsu-donhang}">
+            <span class="nav-icon">🕘</span>
+            <span class="nav-label">
+              <span class="nav-line">Lịch Sử</span>
+              <span class="nav-line">Đơn Hàng</span>
+            </span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/khobep}">
+            <span class="nav-icon">🍳</span>
+            <span class="nav-label">Kho Bếp</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="order-main">
+        <header class="order-topbar">
+          <div>
+            <h1>Đặt Hàng</h1>
+          </div>
+          <div class="topbar-actions">
+            <div class="search-box">
+              <input
+                type="text"
+                id="productSearch"
+                placeholder="Search category or menu..."
+              />
+              <span class="search-icon">🔍</span>
+            </div>
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ☰
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="category-section">
+          <div class="category-pills" id="categoryPills">
+            <button class="pill active" type="button" data-value="">⭐</button>
+            <button
+              class="pill"
+              type="button"
+              th:each="dm : ${dsDanhMuc}"
+              th:attr="data-value=${dm.tenDm}"
+            >
+              <span th:text="${dm.tenDm}"></span>
+            </button>
+          </div>
+          <select id="categoryFilter" class="hidden-select">
+            <option value="">Tất cả danh mục</option>
+            <option
+              th:each="dm : ${dsDanhMuc}"
+              th:value="${dm.tenDm}"
+              th:text="${dm.tenDm}"
+            ></option>
+          </select>
+        </section>
+
+        <section class="menu-section">
+          <div class="section-header">
+            <h3>Coffee Menu</h3>
+          </div>
+          <div class="product-grid" id="productList">
+            <div
+              class="product-card"
+              th:each="sp : ${dsSanPham}"
+              th:with="imgUrl=${sp.hinhAnh != null and !sp.hinhAnh.isBlank() ? (sp.hinhAnh.startsWith('http') or sp.hinhAnh.startsWith('/') ? sp.hinhAnh : (sp.hinhAnh.startsWith('img/') ? '/' + sp.hinhAnh : '/img/' + sp.hinhAnh)) : ''}"
+              th:attr="data-id=${sp.sanPhamId},data-name=${sp.tenSp},data-price=${sp.gia},data-category=${sp.danhMuc.tenDm},data-image=${imgUrl}"
+            >
+              <div class="product-thumb">
+                <img
+                  th:if="${sp.hinhAnh != null and !sp.hinhAnh.isBlank()}"
+                  th:src="${imgUrl}"
+                  th:alt="${sp.tenSp}"
+                  onerror="
+                    this.src =
+                      '/img/z7463588836100_9c92ae464febb1ec2b21ec6ac60c6fce.jpg'
+                  "
+                />
+                <div
+                  class="thumb-placeholder"
+                  th:if="${sp.hinhAnh == null or sp.hinhAnh.isBlank()}"
+                >
+                  Không có ảnh
+                </div>
+              </div>
+              <div class="product-body">
+                <h4 th:text="${sp.tenSp}"></h4>
+                <p
+                  class="price"
+                  th:text="${#numbers.formatDecimal(sp.gia,0,'COMMA',0,'POINT')} + ' VND'"
+                ></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" th:if="${#lists.isEmpty(dsSanPham)}">
+            Không có sản phẩm để hiển thị.
+          </div>
+        </section>
+      </main>
+
+      <aside class="order-right">
+        <div class="order-card">
+          <div class="order-card-header">
+            <h3>Đơn Hàng</h3>
+            <span class="order-count"
+              >Giỏ: <strong id="cartCount">0</strong></span
+            >
+          </div>
+
+          <div class="cart-items" id="cartItems"></div>
+          <div class="empty-cart" id="emptyCart">Giỏ hàng đang trống.</div>
+
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Tổng cộng</span>
+              <strong id="subtotal">0 VND</strong>
+            </div>
+            <div class="summary-row">
+              <span>Giảm giá</span>
+              <strong id="discount">0 VND</strong>
+            </div>
+            <div class="summary-row total">
+              <span>Thành tiền</span>
+              <strong id="total">0 VND</strong>
+            </div>
+          </div>
+
+          <div class="cart-note">
+            <label for="orderNote">Ghi chú</label>
+            <textarea
+              id="orderNote"
+              rows="3"
+              placeholder="Nhập ghi chú cho đơn hàng..."
+            ></textarea>
+          </div>
+
+          <div class="order-actions">
+            <button id="clearCartBtn" type="button" class="ghost-btn">
+              Xóa hết
+            </button>
+            <button id="checkoutBtn" class="checkout-btn" type="button">
+              Hoàn Tất Đơn Hàng
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <script
+      type="module"
+      th:src="@{/js/nhanvien/donhang.js(v=20260310a)}"
+    ></script>
+  </body>
+</html>

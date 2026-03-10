@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh Sách Tồn Kho</title>
+    <link rel="stylesheet" th:href="@{/css/kho/tonkho.css}" />
+  </head>
+  <body>
+    <div class="kho-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-text">Coffee Shop</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/kho/dashboard}">
+            <span class="nav-icon">▦</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/nhapkho}">
+            <span class="nav-icon">⬇</span>
+            <span>Nhập Kho</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/xuatkho}">
+            <span class="nav-icon">⬆</span>
+            <span>Xuất Kho</span>
+          </a>
+          <a class="nav-item active" th:href="@{/kho/tonkho}">
+            <span class="nav-icon">≣</span>
+            <span>Danh Sách Tồn Kho</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a class="nav-item" href="#">
+            <span class="nav-icon">⎋</span>
+            <span>Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <h1>Danh Sách Tồn Kho</h1>
+          </div>
+          <div class="topbar-user">
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ⋯
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="toolbar">
+          <form class="search-box" method="get" th:action="@{/kho/tonkho}">
+            <input
+              type="hidden"
+              name="size"
+              th:value="${pageSize != null ? pageSize : 20}"
+            />
+            <input
+              id="searchInput"
+              name="q"
+              type="text"
+              th:value="${keyword}"
+              placeholder="Tìm kiếm mã/tên nguyên liệu..."
+            />
+            <button class="search-submit" type="submit" aria-label="Tìm kiếm">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+            </button>
+          </form>
+        </section>
+
+        <section class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã Nguyên Liệu</th>
+                <th>Tên Nguyên Liệu</th>
+                <th>Tồn Kho</th>
+                <th>Đơn Vị</th>
+                <th>Hạn Sử Dụng</th>
+                <th>Trạng Thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="nl : ${dsNguyenLieu}">
+                <td th:text="${nl.nguyenlieuId}">NL001</td>
+                <td th:text="${nl.tenNguyenLieu}">Hạt Cà Phê</td>
+                <td>
+                  <span th:text="${nl.slTon}">50</span>
+                </td>
+                <td th:text="${nl.donVi}">kg</td>
+                <td
+                  th:text="${nl.hanSuDung != null ? #temporals.format(nl.hanSuDung, 'dd/MM/yyyy') : '-'}"
+                >
+                  28/05/2024
+                </td>
+                <td>
+                  <span
+                    class="status-chip"
+                    th:text="${nl.trangThai != null ? nl.trangThai : '-'}"
+                    th:classappend="${nl.trangThai} == null ? '' : (${#strings.containsIgnoreCase(nl.trangThai, 'hết')} ? ' status-out' : (${#strings.containsIgnoreCase(nl.trangThai, 'sắp')} ? ' status-low' : ' status-ok'))"
+                  >
+                    Còn hàng
+                  </span>
+                </td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(dsNguyenLieu)}">
+                <td class="empty-cell" colspan="6">Chưa có nguyên liệu.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="table-footer">
+            <span
+              >Tổng số:
+              <span
+                th:text="${totalItems != null ? totalItems : #lists.size(dsNguyenLieu)}"
+                >0</span
+              >
+              nguyên liệu</span
+            >
+            <div
+              class="pagination"
+              th:if="${totalPages != null and totalPages > 1}"
+            >
+              <a
+                class="page-btn"
+                th:classappend="${currentPage == 0} ? ' disabled'"
+                th:href="${currentPage > 0} ? @{/kho/tonkho(page=${currentPage - 1},size=${pageSize},q=${keyword})} : '#'"
+                aria-label="Trang trước"
+                >&#8249;</a
+              >
+              <span class="page-btn active" th:text="${currentPage + 1}"
+                >1</span
+              >
+              <span class="page-total"
+                >/ <span th:text="${totalPages}">1</span></span
+              >
+              <a
+                class="page-btn"
+                th:classappend="${currentPage + 1 >= totalPages} ? ' disabled'"
+                th:href="${currentPage + 1 < totalPages} ? @{/kho/tonkho(page=${currentPage + 1},size=${pageSize},q=${keyword})} : '#'"
+                aria-label="Trang sau"
+                >&#8250;</a
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script th:src="@{/js/kho/tonkho.js}"></script>
+  </body>
+</html>

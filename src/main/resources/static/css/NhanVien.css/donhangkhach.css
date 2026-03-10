@@ -1,0 +1,35 @@
+.flash {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.flash.success {
+  background: #e8f8ec;
+  color: #1b7f39;
+}
+
+.flash.error {
+  background: #fde8e8;
+  color: #c92b2b;
+}
+
+.history-table td small {
+  color: #8b7f7f;
+  font-size: 11px;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #8b7f7f;
+  padding: 16px;
+}
+
+.action-btn.confirm {
+  background: #16a34a;
+}
+
+.action-btn.confirm:hover {
+  background: #12833c;
+}

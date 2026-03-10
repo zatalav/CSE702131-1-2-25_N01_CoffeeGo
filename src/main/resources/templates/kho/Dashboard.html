@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Kho</title>
+    <link rel="stylesheet" th:href="@{/css/kho/dashboard.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-icon">☕</span>
+          <span class="brand-text">Coffee Shop</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item active" th:href="@{/kho/dashboard}">
+            <span class="nav-icon">▦</span>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/nhapkho}">
+            <span class="nav-icon">⬇</span>
+            <span>Nhập Kho</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/xuatkho}">
+            <span class="nav-icon">⬆</span>
+            <span>Xuất Kho</span>
+          </a>
+          <a class="nav-item" th:href="@{/kho/tonkho}">
+            <span class="nav-icon">≣</span>
+            <span>Danh Sách Tồn Kho</span>
+          </a>
+        </nav>
+        <div class="sidebar-footer">
+          <a class="nav-item" th:href="@{/logout}">
+            <span class="nav-icon">⎋</span>
+            <span>Đăng xuất</span>
+          </a>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <h1>Dashboard</h1>
+          <div class="topbar-right">
+            <div class="search-box">
+              <input type="text" placeholder="Tìm kiếm sản phẩm..." />
+              <span class="search-icon">🔍</span>
+            </div>
+            <div class="user-badge">
+              <div class="user-info">
+                <span class="user-name" th:text="${currentUserName}">User</span>
+                <span class="user-role" th:text="${currentUserRole}"
+                  >Nhân viên kho</span
+                >
+              </div>
+              <div class="user-avatar"></div>
+              <button class="icon-btn" type="button">🔔</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="stats-grid">
+          <div class="stat-card green">
+            <div class="stat-title">Tồn Kho Hiện Tại</div>
+            <div class="stat-value" th:text="${totalStock}">0</div>
+            <div class="stat-sub">Sản phẩm</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-title">Nguyên Liệu Sắp Hết</div>
+            <div class="stat-value" th:text="${lowStockCount}">0</div>
+            <div class="stat-sub">Mặt hàng</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-title">Hàng Sắp Hết Hạn</div>
+            <div class="stat-value" th:text="${expirySoonCount}">0</div>
+            <div class="stat-sub">Sản phẩm</div>
+          </div>
+          <div class="stat-card teal">
+            <div class="stat-title">Đơn Nhập Hàng</div>
+            <div class="stat-value" th:text="${pendingNhapCount}">0</div>
+            <div class="stat-sub">Đơn chờ</div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel large">
+            <div class="panel-header">
+              <h3>Tổng Quan Kho Hàng</h3>
+              <div class="legend">
+                <span><i class="dot green"></i>Nhập Kho</span>
+                <span><i class="dot orange"></i>Xuất Kho</span>
+              </div>
+            </div>
+            <canvas id="warehouseChart" height="120"></canvas>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Cảnh Báo Hết Hàng</h3>
+            </div>
+            <div class="alert-list">
+              <div class="alert-item" th:each="nl : ${lowStockItems}">
+                <span class="alert-name" th:text="${nl.tenNguyenLieu}"
+                  >Hạt Cà Phê</span
+                >
+                <span class="alert-qty" th:text="${nl.slTon}">0</span>
+              </div>
+              <div class="empty" th:if="${#lists.isEmpty(lowStockItems)}">
+                Không có cảnh báo.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bottom-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Danh Sách Nguyên Liệu</h3>
+            </div>
+            <table class="simple-table">
+              <thead>
+                <tr>
+                  <th>Tên Nguyên Liệu</th>
+                  <th>Tồn Kho</th>
+                  <th>Đơn Vị</th>
+                  <th>Hạn Sử Dụng</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="nl : ${topNguyenLieu}">
+                  <td th:text="${nl.tenNguyenLieu}"></td>
+                  <td th:text="${nl.slTon}"></td>
+                  <td th:text="${nl.donVi}"></td>
+                  <td
+                    th:text="${nl.hanSuDung != null ? #temporals.format(nl.hanSuDung, 'dd/MM/yyyy') : '-'}"
+                  ></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(topNguyenLieu)}">
+                  <td colspan="4" class="empty">Chưa có dữ liệu.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Lịch Sử Nhập Hàng</h3>
+            </div>
+            <table class="simple-table">
+              <thead>
+                <tr>
+                  <th>Mã Phiếu</th>
+                  <th>Ngày Nhập</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="nk : ${recentNhap}">
+                  <td th:text="${nk.nhapkho_id}"></td>
+                  <td
+                    th:text="${nk.ngay_nhap != null ? #temporals.format(nk.ngay_nhap, 'dd/MM/yyyy') : '-'}"
+                  ></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentNhap)}">
+                  <td colspan="2" class="empty">Chưa có dữ liệu.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Lịch Sử Xuất Hàng</h3>
+            </div>
+            <table class="simple-table">
+              <thead>
+                <tr>
+                  <th>Mã Phiếu</th>
+                  <th>Ngày Xuất</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="xk : ${recentXuat}">
+                  <td th:text="${xk.xuatkho_id}"></td>
+                  <td
+                    th:text="${xk.ngay_xuat != null ? #temporals.format(xk.ngay_xuat, 'dd/MM/yyyy') : '-'}"
+                  ></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentXuat)}">
+                  <td colspan="2" class="empty">Chưa có dữ liệu.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script th:inline="javascript">
+      const labels = /*[[${chartLabels}]]*/ [];
+      const nhapData = /*[[${chartNhap}]]*/ [];
+      const xuatData = /*[[${chartXuat}]]*/ [];
+
+      const ctx = document.getElementById("warehouseChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Nhập Kho",
+              data: nhapData,
+              backgroundColor: "rgba(34, 197, 94, 0.8)",
+              borderRadius: 8,
+            },
+            {
+              label: "Xuất Kho",
+              data: xuatData,
+              backgroundColor: "rgba(251, 146, 60, 0.8)",
+              borderRadius: 8,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { grid: { color: "#edf2f7" } },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

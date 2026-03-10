@@ -1,0 +1,75 @@
+﻿ROUTES=2 STATIC=47
+\nTOP_PAGE_R1
+
+Path   Status    Ms Size
+----   ------    -- ----
+/      200    31.05 6790
+/login 200     7.86 7938
+
+
+
+\nTOP_PAGE_R2
+
+Path   Status    Ms Size
+----   ------    -- ----
+/      200    23.99 6790
+/login 200     7.02 7938
+
+
+
+\nNON200_PAGE
+
+\nSTATIC_NON200_OR_NO_CACHE
+
+Path                                Status   Ms Size Cache
+----                                ------   -- ---- -----
+\css\profile.css                    000    0.04    0      
+\css\Admin\dashboard.css            000    0.03    0      
+\css\Admin\quanly.css               000    0.03    0      
+\css\customer\checkout.css          000    0.05    0      
+\css\customer\menu.css              000    0.05    0      
+\css\customer\orders.css            000    0.02    0      
+\css\customer\profile.css           000    0.04    0      
+\css\customer\purchase.css          000    0.04    0      
+\css\kho\Danhsachtonkho.css         000    0.05    0      
+\css\kho\Dashboard.css              000    0.03    0      
+\css\kho\nhapkho.css                000    0.03    0      
+\css\kho\TaoPhieuNhapKho.css        000    0.03    0      
+\css\kho\TaoPhieuXuatKho.css        000    0.02    0      
+\css\kho\tonkho.css                 000    0.05    0      
+\css\kho\xuatkho.css                000    0.04    0      
+\css\NhanVien.css\donhang.css       000    0.02    0      
+\css\NhanVien.css\donhangkhach.css  000    0.03    0      
+\css\NhanVien.css\Khobep.css        000    0.03    0      
+\css\NhanVien.css\lichsudonhang.css 000    0.04    0      
+\css\NhanVienGiaoHang\giaohang.css  000    0.03    0      
+\js\admin-common.js                 000    0.03    0      
+\js\baocao.js                       000    0.04    0      
+\js\Dashboard.js                    000    0.03    0      
+\js\Quanly.js                       000    0.02    0      
+\js\Quanlycoso.js                   000    0.03    0      
+\js\QuanlyMagiamgia.js              000    0.04    0      
+\js\QuanlyNguyenlieu.js             000    0.03    0      
+\js\Quanlysanpham.js                000    0.03    0      
+\js\customer\checkout.js            000    0.04    0      
+\js\customer\menu.js                000    0.03    0      
+\js\customer\purchase.js            000    0.03    0      
+\js\kho\Danhsachtonkho.js           000    0.03    0      
+\js\kho\Dashboard.js                000    0.04    0      
+\js\kho\nhapkho.js                  000    0.04    0      
+\js\kho\TaoPhieuNhapKho.js          000    0.03    0      
+\js\kho\TaoPhieuXuatKho.js          000    0.03    0      
+\js\kho\tonkho.js                   000    0.05    0      
+\js\kho\xuatkho.js                  000    0.04    0      
+\js\nhanvien\donhang.js             000    0.03    0      
+\js\nhanvien\donhangkhach.js        000    0.04    0      
+\js\nhanvien\Khobep.js              000    0.05    0      
+\js\nhanvien\lichsudonhang.js       000    0.05    0      
+\js\NhanVienGiaoHang\giaohang.js    000    0.04    0      
+\truycap\Dangky.css                 000    0.02    0      
+\truycap\Dangky.js                  000    0.03    0      
+\truycap\Dangnhap.css               000    0.03    0      
+\truycap\Dangnhap.js                000    0.03    0      
+
+
+

@@ -1,0 +1,262 @@
+body {
+  margin: 0;
+  background: #fbf7f7;
+  color: #2f2a2a;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card .label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.stat-card .value {
+  margin-top: 6px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #8a4f4f;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 18px 0 10px;
+}
+
+.chart-card {
+  margin: 8px 0 16px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  padding: 14px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.table-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  padding: 14px;
+  overflow-x: auto;
+}
+
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chart-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-filters.under-title {
+  margin-bottom: 10px;
+}
+
+.chart-filters select,
+.chart-filters input {
+  border: 1px solid #e6d7d7;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: #fff;
+}
+
+.chart-filters input {
+  width: 90px;
+}
+
+.chart-wrap {
+  margin-top: 6px;
+  max-width: 560px;
+}
+
+.history-table.compact th,
+.history-table.compact td {
+  padding: 10px 10px;
+  font-size: 12px;
+}
+
+.history-table.compact {
+  min-width: 640px;
+}
+
+.chart-caption {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.flash {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.flash.success {
+  background: #e9f8ed;
+  color: #157347;
+}
+
+.flash.error {
+  background: #fdeaea;
+  color: #b42318;
+}
+
+.status-pill.delivering {
+  background: #eaf2ff;
+  color: #1d5fd1;
+}
+
+.status-pill.completed {
+  background: #e9f8ed;
+  color: #157347;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  font-size: 11px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.action-btn.take {
+  background: #8a4f4f;
+}
+
+.action-btn.detail {
+  background: #2563eb;
+}
+
+.action-btn.complete {
+  background: #0f9f59;
+}
+
+.action-btn.cancel {
+  background: #dc2626;
+  margin-left: 6px;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+}
+
+.detail-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  padding: 14px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1e7e7;
+  font-size: 12px;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-items {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid #f1e7e7;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.detail-item .left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.map-frame {
+  width: 100%;
+  height: 360px;
+  border: 0;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+
+.map-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #1d4ed8;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.map-link:hover {
+  text-decoration: underline;
+}
+
+.map-actions {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.empty-cell {
+  text-align: center;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+}

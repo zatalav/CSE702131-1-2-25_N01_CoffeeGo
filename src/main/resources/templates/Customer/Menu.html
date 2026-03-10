@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/customer/menu.css}" />
+  </head>
+  <body th:attr="data-customer-id=${customerId}">
+    <div class="page">
+      <aside class="hero">
+        <img src="/img/image.png" alt="Coffee background" />
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div class="brand">coffee</div>
+          <div class="search">
+            <input
+              type="text"
+              id="productSearch"
+              placeholder="Search category or menu..."
+            />
+            <span class="search-icon">🔍</span>
+          </div>
+          <div class="actions">
+            <a class="icon-btn" id="cartLink" href="#" aria-label="Cart">
+              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 6h13.2l-1.6 8.2c-.2 1-1 1.8-2 1.8H8.1c-1 0-1.9-.7-2-1.7L4.6 3H2V1h3.1c.9 0 1.7.6 1.9 1.5L7.2 6zm.9 8.2h8.5l1.2-6.2H6.9l1.2 6.2z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span class="cart-count" id="cartCount">0</span>
+            </a>
+            <div class="profile-wrapper">
+              <button
+                class="icon-btn"
+                id="profileBtn"
+                aria-label="Profile"
+                aria-expanded="false"
+                aria-controls="profileMenu"
+                type="button"
+              >
+                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4 0-7 2-7 4v2h14v-2c0-2-3-4-7-4z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+              <div
+                class="profile-menu"
+                id="profileMenu"
+                hidden
+                style="
+                  position: absolute;
+                  top: 46px;
+                  right: 0;
+                  min-width: 160px;
+                  background: #fff;
+                  border: 1px solid #e6e6e6;
+                  border-radius: 8px;
+                  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+                  padding: 6px 0;
+                  z-index: 10;
+                  display: none;
+                "
+              >
+                <a
+                  th:href="@{/customer/profile(kh=${customerId})}"
+                  style="
+                    display: block;
+                    padding: 8px 14px;
+                    color: #2f2f2f;
+                    text-decoration: none;
+                  "
+                  >Trang cá nhân</a
+                >
+                <a
+                  th:href="@{/customer/orders(kh=${customerId})}"
+                  style="
+                    display: block;
+                    padding: 8px 14px;
+                    color: #2f2f2f;
+                    text-decoration: none;
+                  "
+                  >Đơn mua</a
+                >
+                <a
+                  href="/logout"
+                  style="
+                    display: block;
+                    padding: 8px 14px;
+                    color: #2f2f2f;
+                    text-decoration: none;
+                  "
+                  >Đăng xuất</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="category-bar">
+          <div class="pill active" data-value="">Tất cả</div>
+          <div
+            class="pill"
+            th:each="dm : ${dsDanhMuc}"
+            th:text="${dm.tenDm}"
+            th:attr="data-value=${dm.tenDm}"
+          ></div>
+        </section>
+
+        <section class="menu-section">
+          <h3>Coffee Menu</h3>
+
+          <div th:if="${registered == '1'}" class="notice success">
+            Đăng ký thành công. Chào mừng bạn đến CoffeeGo!
+          </div>
+
+          <div class="menu-grid" id="productList">
+            <article
+              class="product-card"
+              th:each="sp : ${dsSanPham}"
+              th:with="imgUrl=${sp.hinhAnh != null ? (sp.hinhAnh.startsWith('http') or sp.hinhAnh.startsWith('/') ? sp.hinhAnh : (sp.hinhAnh.startsWith('img/') ? '/' + sp.hinhAnh : '/img/' + sp.hinhAnh)) : ''}"
+              th:attr="data-id=${sp.sanPhamId}, data-name=${sp.tenSp}, data-category=${sp.danhMuc != null ? sp.danhMuc.tenDm : ''}, data-price=${defaultPriceByProduct[sp.sanPhamId]}, data-image=${imgUrl}, data-desc=${sp.moTa}"
+            >
+              <div class="thumb">
+                <img
+                  th:if="${sp.hinhAnh != null}"
+                  th:src="${imgUrl}"
+                  alt="product"
+                  loading="lazy"
+                  onerror="
+                    this.src =
+                      '/img/z7463588836100_9c92ae464febb1ec2b21ec6ac60c6fce.jpg'
+                  "
+                />
+                <div th:if="${sp.hinhAnh == null}" class="thumb-placeholder">
+                  No image
+                </div>
+              </div>
+              <div class="info">
+                <h4 th:text="${sp.tenSp}"></h4>
+                <p
+                  th:text="${#numbers.formatDecimal(defaultPriceByProduct[sp.sanPhamId], 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                ></p>
+              </div>
+              <div class="product-variants" style="display: none">
+                <span
+                  th:each="variant : ${variantsByProduct[sp.sanPhamId]}"
+                  class="variant-item"
+                  th:attr="data-size=${variant['size']},data-price=${variant['price']}"
+                ></span>
+              </div>
+              <button class="add-btn" type="button">+</button>
+            </article>
+          </div>
+
+          <div class="load-more" th:if="${hasMore}">
+            <a
+              class="load-more-btn"
+              th:href="@{/customer/menu(size=${nextSize}, kh=${customerId}, registered=${registered})}"
+            >
+              Xem thêm
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-overlay" id="productModal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true">
+        <button class="modal-close" type="button" id="modalClose">×</button>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img id="modalImage" alt="product" />
+          </div>
+          <div class="modal-info">
+            <h3 id="modalName">Tên sản phẩm</h3>
+            <p class="modal-price" id="modalPrice">0 VND</p>
+            <p class="modal-desc" id="modalDesc"></p>
+
+            <div class="modal-group">
+              <span>Cỡ ly:</span>
+              <div class="size-options" id="sizeOptions"></div>
+            </div>
+
+            <div class="modal-group">
+              <span>Số lượng:</span>
+              <div class="qty-controls">
+                <button type="button" class="qty-btn" data-action="decrease">
+                  -
+                </button>
+                <input type="number" id="modalQty" min="1" value="1" />
+                <button type="button" class="qty-btn" data-action="increase">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div class="modal-total">
+              <span>Tổng cộng:</span>
+              <strong id="modalTotal">0 VND</strong>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" id="modalBack">
+                Quay lại
+              </button>
+              <button type="button" class="btn-primary" id="modalAdd">
+                Thêm vào giỏ hàng
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/js/customer/menu.js?v=20260310a"></script>
+  </body>
+</html>

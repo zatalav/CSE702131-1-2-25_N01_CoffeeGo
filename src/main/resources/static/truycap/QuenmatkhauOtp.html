@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="/truycap/Quenmatkhau.css" />
+  </head>
+  <body>
+    <div class="card">
+      <h1 class="title">Verify OTP</h1>
+      <p class="subtitle">Enter OTP code sent to your Gmail.</p>
+
+      <form id="verifyOtpForm">
+        <label class="label" for="otp">OTP</label>
+        <input
+          class="input"
+          id="otp"
+          type="text"
+          maxlength="6"
+          required
+          placeholder="6-digit OTP"
+        />
+        <button class="btn" type="submit">Verify OTP</button>
+      </form>
+
+      <div id="message" class="msg"></div>
+      <a class="back-link" href="/forgot-password">Back</a>
+    </div>
+    <script src="/truycap/QuenmatkhauOtp.js"></script>
+  </body>
+</html>

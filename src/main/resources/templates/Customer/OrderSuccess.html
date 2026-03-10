@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Đặt hàng thành công</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" th:href="@{/css/customer/order-success.css}" />
+  </head>
+  <body>
+    <main class="success-page">
+      <section class="success-card">
+        <div class="success-icon" aria-hidden="true">✓</div>
+        <h1>Đặt Hàng Thành Công!</h1>
+        <p class="success-subtitle">Cảm ơn bạn đã mua sắm cùng chúng tôi.</p>
+        <p class="success-desc">
+          Đơn hàng của bạn đã được xác nhận. Chúng tôi sẽ sớm giao đến bạn.
+        </p>
+
+        <div class="order-summary">
+          <div class="summary-row">
+            <span>Mã Đơn Hàng:</span>
+            <strong th:text="${orderId}">DH001</strong>
+          </div>
+          <div class="summary-row">
+            <span>Tổng Tiền:</span>
+            <strong
+              th:text="${#numbers.formatDecimal(totalAmount,0,'COMMA',0,'POINT')} + 'đ'"
+              >0đ</strong
+            >
+          </div>
+          <div class="summary-row">
+            <span>Phương Thức Thanh Toán:</span>
+            <strong th:text="${paymentMethodLabel}"
+              >Thanh toán khi nhận hàng</strong
+            >
+          </div>
+        </div>
+
+        <a class="continue-btn" th:href="@{/customer/menu(kh=${customerId})}">
+          Tiếp Tục Mua Sắm
+        </a>
+      </section>
+    </main>
+  </body>
+</html>

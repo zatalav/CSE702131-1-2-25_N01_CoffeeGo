@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Danh Mục</title>
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css(v=20260304b)}" />
+    <link rel="stylesheet" th:href="@{/css/Admin/quanly.css(v=20260304b)}" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img
+            th:src="@{/img/ChatGPT Image Mar 4, 2026, 03_24_57 PM.png}"
+            alt="CoffeeGo logo"
+            class="sidebar-logo"
+            style="
+              width: 70px;
+              height: 70px;
+              max-width: 70px;
+              max-height: 70px;
+              object-fit: contain;
+              display: block;
+            "
+          />
+          <h2>CoffeeGO</h2>
+        </div>
+        <ul>
+          <li><a th:href="@{/dashboard}">Bảng điều khiển</a></li>
+          <li><a th:href="@{/admin/coso}">Quản lý cơ sở</a></li>
+          <li class="has-submenu">
+            <a href="#" class="menu-toggle" aria-expanded="false">
+              <span class="menu-label">Quản Lý Người Dùng</span
+              ><span class="chev">▾</span>
+            </a>
+            <ul class="submenu">
+              <li><a th:href="@{/admin/nhanvien}">Quản Lý Nhân Viên</a></li>
+              <li><a th:href="@{/admin/khachhang}">Quản Lý Khách Hàng</a></li>
+            </ul>
+          </li>
+          <li>
+            <a th:href="@{/admin/danhmuc}">Quản lý danh mục</a>
+          </li>
+          <li><a th:href="@{/admin/sanpham}">Quản lý sản phẩm</a></li>
+          <li><a th:href="@{/admin/donhang}">Quản lý đơn hàng</a></li>
+          <li><a th:href="@{/admin/nguyenlieu}">Quản lý nguyên liệu</a></li>
+          <li><a th:href="@{/admin/nhacungcap}">Quản lý nhà cung cấp</a></li>
+          <li class="active"><a th:href="@{/admin/kho}">Quản lý kho</a></li>
+          <li><a th:href="@{/admin/magiamgia}">Quản lý mã giảm giá</a></li>
+          <li><a th:href="@{/admin/baocao}">Báo cáo và thống kê</a></li>
+        </ul>
+      </aside>
+
+      <main class="main staff-page">
+        <header class="topbar">
+          <h1>Quản Lý Kho</h1>
+          <div
+            class="topbar-right"
+            style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            "
+          >
+            <div class="profile" style="position: relative">
+              <button
+                id="profileBtn"
+                class="profile-btn"
+                aria-expanded="false"
+                style="
+                  background: transparent;
+                  border: 0;
+                  color: inherit;
+                  cursor: pointer;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                "
+              >
+                Admin ▾
+              </button>
+              <div
+                id="profileMenu"
+                class="profile-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 38px;
+                  background: #fff;
+                  border: 1px solid #e6e6e6;
+                  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                  padding: 6px 0;
+                  border-radius: 6px;
+                  min-width: 140px;
+                  z-index: 40;
+                "
+              >
+                <a
+                  th:href="@{/profile}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Trang cá nhân</a
+                >
+                <a
+                  th:href="@{/truycap/Dangnhap.html}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Đăng xuất</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="page-header">
+          <div class="card">
+            <div class="filters">
+              <div class="search-wrap">
+                <input
+                  type="text"
+                  id="warehouseSearch"
+                  placeholder="Tìm kiếm kho..."
+                />
+                <button
+                  class="search-btn"
+                  id="warehouseSearchBtn"
+                  aria-label="Tìm"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"
+                      stroke="#fff"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 21l-4.35-4.35"
+                      stroke="#fff"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <select id="viewMode">
+                <option value="">Tất cả</option>
+                <option value="grid">Nhập Kho</option>
+                <option value="list">Xuất Kho</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="content">
+          <div class="box full">
+            <h3>Danh Sách Kho</h3>
+            <table class="table-list">
+              <thead>
+                <tr>
+                  <th>Mã Phiếu Kho</th>
+                  <th>Loại Phiếu</th>
+                  <th>Tên Nhân Viên</th>
+                  <th>Tên Nguyên Liệu</th>
+                  <th>Số lượng</th>
+                  <th>Đơn Vị</th>
+                  <th>Ghi chú</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="warehouseTableBody">
+                <tr th:each="w : ${warehouses}">
+                  <td th:text="${w.maPhieu}"></td>
+                  <td th:text="${w.loaiPhieu}"></td>
+                  <td th:text="${w.tenNhanVien}"></td>
+                  <td th:text="${w.tenNguyenLieu}"></td>
+                  <td th:text="${w.soLuong}"></td>
+                  <td th:text="${w.donVi}"></td>
+                  <td th:text="${w.ghiChu}"></td>
+                  <td>
+                    <a href="#" class="action-btn view">Xem</a>
+                    <a href="#" class="action-btn edit">Sửa</a>
+                    <a href="#" class="action-btn delete">Xóa</a>
+                  </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(warehouses)}">
+                  <td
+                    colspan="8"
+                    style="text-align: center; padding: 12px; color: #7b7b7b"
+                  >
+                    Chưa có dữ liệu kho.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div
+              class="pagination"
+              th:if="${totalPages != null and totalPages > 0}"
+            >
+              <a
+                th:if="${currentPage > 0}"
+                th:href="@{/admin/kho(page=${currentPage - 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >‹</a
+              >
+              <span
+                th:unless="${currentPage > 0}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >‹</span
+              >
+              <span class="current" th:text="${currentPage + 1}"></span>
+              <a
+                th:if="${currentPage + 1 < totalPages}"
+                th:href="@{/admin/kho(page=${currentPage + 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >›</a
+              >
+              <span
+                th:unless="${currentPage + 1 < totalPages}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >›</span
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script th:src="@{/js/admin-common.js(v=20260307a)}"></script>
+    <script th:src="@{/js/quanly-prefetch.js(v=20260310a)}"></script>
+    <script th:src="@{/js/Quanly.js(v=20260310a)}"></script>
+  </body>
+</html>

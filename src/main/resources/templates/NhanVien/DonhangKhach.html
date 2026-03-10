@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Đơn Hàng Khách</title>
+    <link rel="stylesheet" th:href="@{/css/NhanVien.css/lichsudonhang.css}" />
+    <link rel="stylesheet" th:href="@{/css/NhanVien.css/donhangkhach.css}" />
+  </head>
+  <body>
+    <div class="history-shell">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand">
+          <span class="brand-text">coffee</span>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/nhanvien/donhang}">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Đặt Hàng</span>
+          </a>
+          <a class="nav-item active" th:href="@{/nhanvien/donhang-khach}">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">
+              <span class="nav-line">Đơn Khách</span>
+              <span class="nav-line">Chờ Xác Nhận</span>
+            </span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/lichsu-donhang}">
+            <span class="nav-icon">🕘</span>
+            <span class="nav-label">
+              <span class="nav-line">Lịch Sử</span>
+              <span class="nav-line">Đơn Hàng</span>
+            </span>
+          </a>
+          <a class="nav-item" th:href="@{/nhanvien/khobep}">
+            <span class="nav-icon">🍳</span>
+            <span class="nav-label">Kho Bếp</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="history-main">
+        <header class="history-topbar">
+          <div class="history-title">Đơn Khách Chờ Xác Nhận</div>
+          <div class="topbar-actions">
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ☰
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div
+          class="flash success"
+          th:if="${successMessage}"
+          th:text="${successMessage}"
+        ></div>
+        <div
+          class="flash error"
+          th:if="${errorMessage}"
+          th:text="${errorMessage}"
+        ></div>
+
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Mã Đơn</th>
+              <th>Khách hàng</th>
+              <th>SĐT</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${orders == null || #lists.isEmpty(orders)}">
+              <td colspan="7" class="empty-cell">
+                Không có đơn hàng chờ xác nhận.
+              </td>
+            </tr>
+            <tr th:each="o : ${orders}">
+              <td>
+                <span th:text="${o.date}"></span><br />
+                <small th:text="${o.time}"></small>
+              </td>
+              <td th:text="${o.code}"></td>
+              <td th:text="${o.name}"></td>
+              <td th:text="${o.phone}"></td>
+              <td th:text="${o.total}"></td>
+              <td>
+                <span class="status-pill pending" th:text="${o.status}"></span>
+              </td>
+              <td>
+                <form
+                  th:action="@{/nhanvien/donhang-khach/confirm}"
+                  method="post"
+                >
+                  <input type="hidden" name="orderId" th:value="${o.code}" />
+                  <button class="action-btn confirm" type="submit">
+                    Xác nhận đơn
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+
+    <script th:src="@{/js/nhanvien/donhangkhach.js}"></script>
+  </body>
+</html>

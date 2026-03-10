@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bảng Điều Khiển Quán Coffee</title>
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css(v=20260305f)}" />
+    <link rel="stylesheet" th:href="@{/css/Admin/quanly.css(v=20260304b)}" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img
+            th:src="@{/img/ChatGPT Image Mar 4, 2026, 03_24_57 PM.png}"
+            alt="CoffeeGo logo"
+            class="sidebar-logo"
+            style="
+              width: 70px;
+              height: 70px;
+              max-width: 70px;
+              max-height: 70px;
+              object-fit: contain;
+              display: block;
+            "
+          />
+          <h2>CoffeeGO</h2>
+        </div>
+        <ul>
+          <li class="active"><a th:href="@{/dashboard}">Bảng điều khiển</a></li>
+          <li><a th:href="@{/admin/coso}">Quản lý cơ sở</a></li>
+          <li class="has-submenu">
+            <a href="#" class="menu-toggle" aria-expanded="false">
+              <span class="menu-label">Quản Lý Người Dùng</span
+              ><span class="chev">▾</span>
+            </a>
+            <ul class="submenu">
+              <li><a th:href="@{/admin/nhanvien}">Quản Lý Nhân Viên</a></li>
+              <li><a th:href="@{/admin/khachhang}">Quản Lý Khách Hàng</a></li>
+            </ul>
+          </li>
+          <li><a th:href="@{/admin/danhmuc}">Quản lý danh mục</a></li>
+          <li><a th:href="@{/admin/sanpham}">Quản lý sản phẩm</a></li>
+          <li><a th:href="@{/admin/donhang}">Quản lý đơn hàng</a></li>
+          <li><a th:href="@{/admin/nguyenlieu}">Quản lý nguyên liệu</a></li>
+          <li><a th:href="@{/admin/nhacungcap}">Quản lý nhà cung cấp</a></li>
+          <li><a th:href="@{/admin/kho}">Quản lý kho</a></li>
+          <li><a th:href="@{/admin/magiamgia}">Quản lý mã giảm giá</a></li>
+          <li><a th:href="@{/admin/baocao}">Báo cáo và thống kê</a></li>
+        </ul>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <h1>Bảng Điều Khiển Quán Coffee</h1>
+          <div
+            class="topbar-right"
+            style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            "
+          >
+            <div class="profile" style="position: relative">
+              <button
+                id="profileBtn"
+                class="profile-btn"
+                aria-expanded="false"
+                style="
+                  background: transparent;
+                  border: 0;
+                  color: inherit;
+                  cursor: pointer;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                "
+              >
+                Admin ▾
+              </button>
+              <div
+                id="profileMenu"
+                class="profile-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 38px;
+                  background: #fff;
+                  border: 1px solid #e6e6e6;
+                  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                  padding: 6px 0;
+                  border-radius: 6px;
+                  min-width: 140px;
+                  z-index: 40;
+                "
+              >
+                <a
+                  th:href="@{/profile}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Trang cá nhân</a
+                >
+                <a
+                  th:href="@{/truycap/Dangnhap.html}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Đăng xuất</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="stats">
+          <div class="card">
+            <p>Doanh thu hôm nay</p>
+            <h2 id="todayRevenue">-- ₫</h2>
+            <span class="up" id="revenuePercent">▲ --%</span>
+          </div>
+          <div class="card">
+            <p>Đơn hàng hôm nay</p>
+            <h2 id="todayOrders">--</h2>
+            <span class="up" id="ordersPercent">▲ --%</span>
+          </div>
+          <div class="card">
+            <p>Khách hàng hiện có</p>
+            <h2 id="totalCustomers">--</h2>
+            <small id="onlineCustomers">-- online</small>
+          </div>
+          <div class="card danger">
+            <p>Hàng tồn ít</p>
+            <h2 id="lowStock">--</h2>
+          </div>
+        </section>
+
+        <section class="content">
+          <div class="box">
+            <h3>Top sản phẩm bán chạy tháng này</h3>
+            <div class="donut-layout">
+              <canvas id="revenueChart"></canvas>
+              <div id="topProductsLegend" class="donut-legend"></div>
+            </div>
+            <p class="total">Tổng doanh thu: <b id="totalRevenue">-- ₫</b></p>
+          </div>
+
+          <div class="box">
+            <h3>Tóm tắt đơn hàng</h3>
+            <table>
+              <tr>
+                <th>Mã</th>
+                <th>Khách</th>
+                <th>Trạng thái</th>
+                <th>Tổng</th>
+              </tr>
+              <tbody id="ordersTableBody">
+                <tr>
+                  <td colspan="4" style="text-align: center">Đang tải...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script th:src="@{/js/admin-common.js(v=20260307a)}"></script>
+    <script type="module" th:src="@{/js/Dashboard.js(v=20260310a)}"></script>
+    <script th:inline="javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // search button behavior: trigger input event on the nearest input
+        document.querySelectorAll(".search-btn").forEach(function (btn) {
+          btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            var wrap = btn.closest(".search-wrap");
+            if (!wrap) return;
+            var input = wrap.querySelector("input");
+            if (input) {
+              input.dispatchEvent(new Event("input", { bubbles: true }));
+              input.focus();
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

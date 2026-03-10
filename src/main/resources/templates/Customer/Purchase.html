@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoffeeGo - Đơn mua hàng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/customer/purchase.css?v=20260304f" />
+  </head>
+  <body
+    th:attr="
+      data-customer-id=${customerId},
+      data-customer-name=${customerName},
+      data-customer-phone=${customerPhone},
+      data-customer-address=${customerAddress},
+      data-voucher-code=${voucherCode}
+    "
+  >
+    <div class="purchase-page">
+      <header class="purchase-header">
+        <a class="back-link" th:href="@{/customer/checkout(kh=${customerId})}"
+          >← Quay lại giỏ hàng</a
+        >
+        <h1>Đơn mua hàng</h1>
+      </header>
+
+      <section class="card info-card">
+        <div class="section-title">Thông tin giao hàng</div>
+        <div
+          class="customer-name"
+          id="customerNameText"
+          th:text="${customerName}"
+        ></div>
+        <div
+          class="customer-phone"
+          id="customerPhoneText"
+          th:text="${customerPhone}"
+        ></div>
+        <div
+          class="customer-address"
+          id="customerAddressText"
+          th:text="${customerAddress}"
+        ></div>
+      </section>
+
+      <section class="card order-card">
+        <div class="section-title">Đơn hàng của bạn</div>
+        <div id="orderItems" class="order-items"></div>
+        <div id="emptyCart" class="empty-cart" style="display: none">
+          Giỏ hàng đang trống.
+        </div>
+      </section>
+
+      <section class="row-grid">
+        <div class="card voucher-card">
+          <div class="section-title">Voucher</div>
+          <div class="voucher-row">
+            <select id="voucherSelect">
+              <option value="">Chọn mã giảm giá</option>
+            </select>
+            <button type="button" id="applyVoucherBtn">Áp dụng</button>
+          </div>
+          <p id="voucherMessage" class="voucher-message"></p>
+        </div>
+
+        <div class="card summary-card">
+          <div class="summary-row">
+            <span>Tạm tính</span>
+            <strong id="subtotalAmount">0 VND</strong>
+          </div>
+          <div class="summary-row">
+            <span>Giảm giá</span>
+            <strong id="discountAmount">0 VND</strong>
+          </div>
+          <div class="summary-row">
+            <span>Phí vận chuyển</span>
+            <strong id="shippingAmount">0 VND</strong>
+          </div>
+          <p id="shippingInfo" class="shipping-info"></p>
+          <div class="summary-row total-row">
+            <span>Tổng cộng</span>
+            <strong id="finalTotalAmount">0 VND</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card payment-card">
+        <div class="section-title">Phương thức thanh toán</div>
+        <label class="radio-line">
+          <input type="radio" name="paymentMethod" value="COD" checked />
+          <span>Thanh toán khi nhận hàng (COD)</span>
+        </label>
+        <label class="radio-line">
+          <input type="radio" name="paymentMethod" value="CARD" />
+          <span>Thanh toán bằng thẻ tín dụng</span>
+        </label>
+
+        <div class="section-title" style="margin-top: 14px">
+          Ghi chú khách hàng
+        </div>
+        <textarea
+          id="customerNote"
+          rows="3"
+          placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."
+        ></textarea>
+      </section>
+
+      <section class="card footer-card">
+        <div class="left-info">
+          <span id="itemCountText">0 sản phẩm</span>
+        </div>
+        <strong id="footerTotal">0 VND</strong>
+        <button type="button" id="placeOrderBtn">Đặt hàng</button>
+      </section>
+    </div>
+
+    <script type="module" src="/js/customer/purchase.js?v=20260310a"></script>
+  </body>
+</html>

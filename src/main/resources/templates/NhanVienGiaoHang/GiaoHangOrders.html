@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Đơn Giao Hàng</title>
+    <link
+      rel="stylesheet"
+      th:href="@{/css/NhanVien.css/lichsudonhang.css(v=20260304d)}"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/css/NhanVienGiaoHang/giaohang.css(v=20260304d)}"
+    />
+  </head>
+  <body>
+    <div class="history-shell">
+      <aside class="order-sidebar">
+        <div class="sidebar-brand"><span class="brand-text">coffee</span></div>
+        <nav class="sidebar-nav">
+          <a class="nav-item" th:href="@{/nhanvien/giaohang}">
+            <span class="nav-icon">🚚</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item active" th:href="@{/nhanvien/giaohang/donhang}">
+            <span class="nav-icon">📦</span>
+            <span class="nav-label">Đơn giao</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="history-main">
+        <header class="history-topbar">
+          <div class="history-title">Danh sách đơn giao hàng</div>
+          <div class="topbar-actions">
+            <button class="icon-btn" type="button" aria-label="Thông báo">
+              🔔
+            </button>
+            <div class="menu-dropdown">
+              <button
+                id="menuBtn"
+                class="icon-btn"
+                type="button"
+                aria-label="Menu"
+                aria-expanded="false"
+              >
+                ☰
+              </button>
+              <div id="menuDropdown" class="menu-panel">
+                <a th:href="@{/profile}">Trang cá nhân</a>
+                <a th:href="@{/logout}">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div
+          class="flash success"
+          th:if="${successMessage}"
+          th:text="${successMessage}"
+        ></div>
+        <div
+          class="flash error"
+          th:if="${errorMessage}"
+          th:text="${errorMessage}"
+        ></div>
+
+        <div class="section-title">Đơn đã xác nhận (chờ nhận giao)</div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>SĐT</th>
+              <th>Địa chỉ</th>
+              <th>Tổng tiền</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              th:if="${availableOrders == null || #lists.isEmpty(availableOrders)}"
+            >
+              <td colspan="7" class="empty-cell">
+                Không có đơn đã xác nhận chờ giao.
+              </td>
+            </tr>
+            <tr th:each="o : ${availableOrders}">
+              <td>
+                <span th:text="${o.date}"></span><br /><small
+                  th:text="${o.time}"
+                ></small>
+              </td>
+              <td th:text="${o.code}"></td>
+              <td th:text="${o.name}"></td>
+              <td th:text="${o.phone}"></td>
+              <td th:text="${o.address}"></td>
+              <td th:text="${o.total}"></td>
+              <td>
+                <form th:action="@{/nhanvien/giaohang/nhan}" method="post">
+                  <input type="hidden" name="orderId" th:value="${o.code}" />
+                  <button class="action-btn take" type="submit">
+                    Nhận giao
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-title">Đơn đang giao của bạn</div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>SĐT</th>
+              <th>Địa chỉ</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${myOrders == null || #lists.isEmpty(myOrders)}">
+              <td colspan="8" class="empty-cell">
+                Bạn chưa nhận đơn nào để giao.
+              </td>
+            </tr>
+            <tr th:each="o : ${myOrders}">
+              <td>
+                <span th:text="${o.date}"></span><br /><small
+                  th:text="${o.time}"
+                ></small>
+              </td>
+              <td th:text="${o.code}"></td>
+              <td th:text="${o.name}"></td>
+              <td th:text="${o.phone}"></td>
+              <td th:text="${o.address}"></td>
+              <td th:text="${o.total}"></td>
+              <td>
+                <span class="status-pill delivering">Đang giao hàng</span>
+              </td>
+              <td>
+                <a
+                  class="action-btn detail"
+                  style="text-decoration: none"
+                  th:href="@{/nhanvien/giaohang/chitiet(orderId=${o.code})}"
+                  >Chi tiết</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-title">Đơn đã hủy của bạn</div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>SĐT</th>
+              <th>Tổng tiền</th>
+              <th>Lý do hủy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              th:if="${cancelledOrders == null || #lists.isEmpty(cancelledOrders)}"
+            >
+              <td colspan="6" class="empty-cell">Bạn chưa hủy đơn nào.</td>
+            </tr>
+            <tr th:each="o : ${cancelledOrders}">
+              <td>
+                <span th:text="${o.date}"></span><br /><small
+                  th:text="${o.time}"
+                ></small>
+              </td>
+              <td th:text="${o.code}"></td>
+              <td th:text="${o.name}"></td>
+              <td th:text="${o.phone}"></td>
+              <td th:text="${o.total}"></td>
+              <td th:text="${o.reason}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+
+    <script th:src="@{/js/NhanVienGiaoHang/giaohang.js(v=20260304d)}"></script>
+  </body>
+</html>

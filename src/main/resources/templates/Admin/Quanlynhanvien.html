@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Nhân Viên</title>
+
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css(v=20260304b)}" />
+    <link rel="stylesheet" th:href="@{/css/Admin/quanly.css(v=20260304b)}" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img
+            th:src="@{/img/ChatGPT Image Mar 4, 2026, 03_24_57 PM.png}"
+            alt="CoffeeGo logo"
+            class="sidebar-logo"
+            style="
+              width: 70px;
+              height: 70px;
+              max-width: 70px;
+              max-height: 70px;
+              object-fit: contain;
+              display: block;
+            "
+          />
+          <h2>CoffeeGO</h2>
+        </div>
+        <ul>
+          <li><a th:href="@{/dashboard}">Bảng điều khiển</a></li>
+          <li><a th:href="@{/admin/coso}">Quản lý cơ sở</a></li>
+          <li class="has-submenu">
+            <a href="#" class="menu-toggle" aria-expanded="false">
+              <span class="menu-label">Quản Lý Người Dùng</span
+              ><span class="chev">▾</span>
+            </a>
+            <ul class="submenu">
+              <li><a th:href="@{/admin/nhanvien}">Quản Lý Nhân Viên</a></li>
+              <li><a th:href="@{/admin/khachhang}">Quản Lý Khách Hàng</a></li>
+            </ul>
+          </li>
+
+          <li><a th:href="@{/admin/danhmuc}">Quản lý danh mục</a></li>
+          <li><a th:href="@{/admin/sanpham}">Quản lý sản phẩm</a></li>
+          <li><a th:href="@{/admin/donhang}">Quản lý đơn hàng</a></li>
+          <li><a th:href="@{/admin/nguyenlieu}">Quản lý nguyên liệu</a></li>
+          <li><a th:href="@{/admin/nhacungcap}">Quản lý nhà cung cấp</a></li>
+          <li><a th:href="@{/admin/coso}">Quản lý cơ sở</a></li>
+          <li><a th:href="@{/admin/kho}">Quản lý kho</a></li>
+          <li><a th:href="@{/admin/magiamgia}">Quản lý mã giảm giá</a></li>
+          <li><a th:href="@{/admin/baocao}">Báo cáo và thống kê</a></li>
+        </ul>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main staff-page">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <h1>Quản Lý Nhân Viên</h1>
+          <div
+            class="topbar-right"
+            style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            "
+          >
+            <div class="profile" style="position: relative">
+              <button
+                id="profileBtn"
+                class="profile-btn"
+                aria-expanded="false"
+                style="
+                  background: transparent;
+                  border: 0;
+                  color: inherit;
+                  cursor: pointer;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                "
+              >
+                Admin ▾
+              </button>
+              <div
+                id="profileMenu"
+                class="profile-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 38px;
+                  background: #fff;
+                  border: 1px solid #e6e6e6;
+                  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                  padding: 6px 0;
+                  border-radius: 6px;
+                  min-width: 140px;
+                  z-index: 40;
+                "
+              >
+                <a
+                  th:href="@{/profile}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Trang cá nhân</a
+                >
+                <a
+                  th:href="@{/truycap/Dangnhap.html}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Đăng xuất</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- ACTION BAR -->
+        <section class="page-header">
+          <div class="card">
+            <div class="filters">
+              <div class="search-wrap">
+                <input
+                  type="text"
+                  id="categorySearch"
+                  placeholder="Tìm kiếm nhân viên..."
+                />
+                <button
+                  class="search-btn"
+                  id="categorySearchBtn"
+                  aria-label="Tìm"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"
+                      stroke="#fff"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 21l-4.35-4.35"
+                      stroke="#fff"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <button id="addBtn">Thêm Nhân Viên</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- TABLE -->
+        <section class="content">
+          <div class="box full">
+            <h3>Danh Sách Nhân Viên</h3>
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-error">
+              <span th:text="${errorMessage}"></span>
+            </div>
+            <table class="table-list">
+              <thead>
+                <tr>
+                  <th>Mã NV</th>
+                  <th>Họ và tên</th>
+                  <th>Email</th>
+                  <th>SĐT</th>
+                  <th>Chức vụ</th>
+                  <th>Cơ sở</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="nv : ${dsNhanVien}">
+                  <td th:text="${nv.nhanvienId}"></td>
+                  <td th:text="${nv.tenNv}"></td>
+                  <td th:text="${nv.gmail}"></td>
+                  <td th:text="${nv.sdt}"></td>
+                  <td th:text="${nv.chucVu}"></td>
+                  <td th:text="${nv.coSo != null ? nv.coSo.tenCs : ''}"></td>
+                  <td>
+                    <button
+                      class="btn-view open-view"
+                      th:data-id="${nv.nhanvienId}"
+                      th:data-ten="${nv.tenNv}"
+                      th:data-sdt="${nv.sdt}"
+                      th:data-email="${nv.gmail}"
+                      th:data-diachi="${nv.diaChi}"
+                      th:data-chucvu="${nv.chucVu}"
+                      th:data-gioitinh="${nv.gioiTinh}"
+                      th:data-ngaysinh="${nv.ngaySinh != null ? #temporals.format(nv.ngaySinh, 'dd/MM/yyyy') : ''}"
+                      th:data-cccd="${nv.cccd}"
+                      th:data-coso="${nv.coSo != null ? nv.coSo.tenCs : ''}"
+                      th:data-img="${nv.imgNv != null ? nv.imgNv : ''}"
+                    >
+                      Xem
+                    </button>
+                    <button
+                      class="btn-edit open-edit"
+                      th:data-id="${nv.nhanvienId}"
+                      th:data-ten="${nv.tenNv}"
+                      th:data-sdt="${nv.sdt}"
+                      th:data-email="${nv.gmail}"
+                      th:data-diachi="${nv.diaChi}"
+                      th:data-chucvu="${nv.chucVu}"
+                      th:data-gioitinh="${nv.gioiTinh}"
+                      th:data-ngaysinh="${nv.ngaySinh != null ? #temporals.format(nv.ngaySinh, 'dd/MM/yyyy') : ''}"
+                      th:data-cccd="${nv.cccd}"
+                      th:data-password="${nv.password}"
+                      th:data-cosoid="${nv.coSo != null ? nv.coSo.cosoId : ''}"
+                      th:data-img="${nv.imgNv != null ? nv.imgNv : ''}"
+                    >
+                      Sửa
+                    </button>
+                    <button
+                      class="btn-delete open-delete"
+                      th:data-id="${nv.nhanvienId}"
+                      th:data-ten="${nv.tenNv}"
+                      th:data-delete-url="@{/admin/nhanvien/delete}"
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div
+              class="pagination"
+              th:if="${totalPages != null and totalPages > 0}"
+            >
+              <a
+                th:if="${currentPage > 0}"
+                th:href="@{/admin/nhanvien(page=${currentPage - 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >‹</a
+              >
+              <span
+                th:unless="${currentPage > 0}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >‹</span
+              >
+              <span class="current" th:text="${currentPage + 1}"></span>
+              <a
+                th:if="${currentPage + 1 < totalPages}"
+                th:href="@{/admin/nhanvien(page=${currentPage + 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >›</a
+              >
+              <span
+                th:unless="${currentPage + 1 < totalPages}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >›</span
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- MODAL THÊM NHÂN VIÊN -->
+    <div id="addStaffModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Thêm Nhân Viên</h2>
+          <button class="close-btn" id="closeModal">×</button>
+        </div>
+
+        <form
+          id="addStaffForm"
+          class="modal-body"
+          th:action="@{/admin/nhanvien/add}"
+          th:object="${nhanVien}"
+          method="post"
+        >
+          <div class="form-group">
+            <label>Họ và tên</label>
+            <input type="text" th:field="*{tenNv}" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Chức vụ</label>
+              <select id="addChucVu" th:field="*{chucVu}">
+                <option value="Admin">Admin</option>
+                <option value="Nhân viên kho">Nhân viên kho</option>
+                <option value="Nhân viên phục vụ">Nhân viên phục vụ</option>
+                <option value="Nhân viên vận chuyển">
+                  Nhân viên vận chuyển
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Giới tính</label>
+              <select th:field="*{gioiTinh}">
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ngày sinh</label>
+              <input
+                type="text"
+                th:field="*{ngaySinh}"
+                placeholder="dd/MM/yyyy"
+                pattern="([0-9]{2}/[0-9]{2}/[0-9]{4}|[0-9]{8})"
+                title="Nhập ngày theo định dạng dd/MM/yyyy hoặc 8 số liền (vd: 22122005)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>CCCD</label>
+              <input
+                type="text"
+                th:field="*{cccd}"
+                inputmode="numeric"
+                maxlength="12"
+                pattern="[0-9]{12}"
+                title="CCCD gồm đúng 12 chữ số"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Số điện thoại</label>
+              <input
+                type="text"
+                th:field="*{sdt}"
+                inputmode="numeric"
+                maxlength="10"
+                pattern="(03[2-9]|05[2689]|07[06789]|08[1-9]|09[0-9])[0-9]{7}"
+                title="Số điện thoại di động Việt Nam gồm 10 số hợp lệ"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" th:field="*{gmail}" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Mật khẩu</label>
+            <input type="password" th:field="*{password}" />
+          </div>
+
+          <div class="form-group" id="addCosoGroup">
+            <label>Cơ sở (bắt buộc cho nhân viên phục vụ)</label>
+            <select id="addCosoId" name="cosoId">
+              <option value="">-- Chọn cơ sở --</option>
+              <option
+                th:each="cs : ${dsCoSo}"
+                th:value="${cs.cosoId}"
+                th:text="${cs.tenCs}"
+              ></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Ảnh nhân viên</label>
+            <input type="hidden" th:field="*{imgNv}" id="addImgNv" />
+            <input type="file" id="addImgNvFile" accept="image/*" />
+            <small
+              id="addImgUploadStatus"
+              style="display: block; margin-top: 6px"
+            ></small>
+            <img
+              id="addImgPreview"
+              alt="Xem trước ảnh nhân viên"
+              style="
+                display: none;
+                margin-top: 8px;
+                width: 120px;
+                height: 120px;
+                object-fit: cover;
+                border-radius: 10px;
+              "
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" th:field="*{diaChi}" />
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" id="cancelBtn">Hủy</button>
+            <button type="submit">Thêm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL XEM NHÂN VIÊN -->
+    <div id="viewModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Thông Tin Nhân Viên</h2>
+          <button class="close-btn" id="closeViewModal">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row" style="align-items: center">
+            <div class="form-group">
+              <label>Ảnh</label>
+              <img
+                id="viewImgNv"
+                alt="Ảnh nhân viên"
+                style="
+                  width: 120px;
+                  height: 120px;
+                  object-fit: cover;
+                  border-radius: 10px;
+                "
+              />
+            </div>
+            <div class="form-group">
+              <label>Mã NV</label>
+              <p id="viewId"></p>
+              <label>Họ và tên</label>
+              <p id="viewTen"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <p id="viewEmail"></p>
+            </div>
+            <div class="form-group">
+              <label>SĐT</label>
+              <p id="viewSdt"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Chức vụ</label>
+              <p id="viewChucVu"></p>
+            </div>
+            <div class="form-group">
+              <label>Giới tính</label>
+              <p id="viewGioiTinh"></p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ngày sinh</label>
+              <p id="viewNgaySinh"></p>
+            </div>
+            <div class="form-group">
+              <label>CCCD</label>
+              <p id="viewCccd"></p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cơ sở</label>
+            <p id="viewCoso"></p>
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ</label>
+            <p id="viewDiaChi"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeViewBtn">Đóng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL SỬA NHÂN VIÊN -->
+    <div id="editModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Cập Nhật Nhân Viên</h2>
+          <button class="close-btn" id="closeEditModal">×</button>
+        </div>
+        <form
+          id="editStaffForm"
+          class="modal-body"
+          th:action="@{/admin/nhanvien/update}"
+          method="post"
+        >
+          <input type="hidden" id="editId" name="nhanvienId" />
+          <input type="hidden" id="editImgNv" name="imgNv" />
+
+          <div class="form-group">
+            <label>Họ và tên</label>
+            <input type="text" id="editTen" name="tenNv" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Chức vụ</label>
+              <select id="editChucVu" name="chucVu">
+                <option value="Admin">Admin</option>
+                <option value="Nhân viên kho">Nhân viên kho</option>
+                <option value="Nhân viên phục vụ">Nhân viên phục vụ</option>
+                <option value="Nhân viên vận chuyển">
+                  Nhân viên vận chuyển
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Giới tính</label>
+              <select id="editGioiTinh" name="gioiTinh">
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ngày sinh</label>
+              <input
+                type="text"
+                id="editNgaySinh"
+                name="ngaySinh"
+                placeholder="dd/MM/yyyy"
+                pattern="([0-9]{2}/[0-9]{2}/[0-9]{4}|[0-9]{8})"
+                title="Nhập ngày theo định dạng dd/MM/yyyy hoặc 8 số liền (vd: 22122005)"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>CCCD</label>
+              <input
+                type="text"
+                id="editCccd"
+                name="cccd"
+                inputmode="numeric"
+                maxlength="12"
+                pattern="[0-9]{12}"
+                title="CCCD gồm đúng 12 chữ số"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Số điện thoại</label>
+              <input
+                type="text"
+                id="editSdt"
+                name="sdt"
+                inputmode="numeric"
+                maxlength="10"
+                pattern="(03[2-9]|05[2689]|07[06789]|08[1-9]|09[0-9])[0-9]{7}"
+                title="Số điện thoại di động Việt Nam gồm 10 số hợp lệ"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="editEmail" name="gmail" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Mật khẩu</label>
+            <input type="text" id="editPassword" name="password" />
+          </div>
+
+          <div class="form-group" id="editCosoGroup">
+            <label>Cơ sở (bắt buộc cho nhân viên phục vụ)</label>
+            <select id="editCosoId" name="cosoId">
+              <option value="">-- Chọn cơ sở --</option>
+              <option
+                th:each="cs : ${dsCoSo}"
+                th:value="${cs.cosoId}"
+                th:text="${cs.tenCs}"
+              ></option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" id="editDiaChi" name="diaChi" />
+          </div>
+
+          <div class="form-group">
+            <label>Ảnh hiện tại</label>
+            <img
+              id="editImgPreview"
+              alt="Ảnh nhân viên"
+              style="
+                width: 120px;
+                height: 120px;
+                object-fit: cover;
+                border-radius: 10px;
+              "
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Đổi ảnh</label>
+            <input type="file" id="editImgNvFile" accept="image/*" />
+            <small
+              id="editImgUploadStatus"
+              style="display: block; margin-top: 6px"
+            ></small>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" id="cancelEditBtn">Hủy</button>
+            <button type="submit">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL XÓA NHÂN VIÊN -->
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Xóa Nhân Viên</h2>
+          <button class="close-btn" id="closeDeleteModal">×</button>
+        </div>
+        <form id="deleteForm" class="modal-body" method="post">
+          <input type="hidden" id="deleteId" name="nhanvienId" />
+          <p>Bạn có chắc muốn xóa <strong id="deleteTen"></strong>?</p>
+          <div class="modal-footer">
+            <button type="button" id="cancelDeleteBtn">Hủy</button>
+            <button type="submit" class="danger">Xóa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script th:inline="javascript">
+      window.CLOUDINARY_CLOUD_NAME = /*[[${cloudinaryCloudName}]]*/ "";
+      window.CLOUDINARY_UPLOAD_PRESET =
+        /*[[${cloudinaryUploadPreset}]]*/ "coffee_upload";
+    </script>
+    <script th:src="@{/js/admin-common.js(v=20260307a)}"></script>
+    <script th:src="@{/js/quanly-prefetch.js(v=20260310a)}"></script>
+    <script th:src="@{/js/Quanly.js(v=20260310a)}"></script>
+  </body>
+</html>

@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Sản Phẩm</title>
+
+    <link rel="stylesheet" th:href="@{/css/Admin/dashboard.css(v=20260304b)}" />
+    <link rel="stylesheet" th:href="@{/css/Admin/quanly.css(v=20260304b)}" />
+
+    <style>
+      .modal-body {
+        max-height: 75vh;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img
+            th:src="@{/img/ChatGPT Image Mar 4, 2026, 03_24_57 PM.png}"
+            alt="CoffeeGo logo"
+            class="sidebar-logo"
+            style="
+              width: 70px;
+              height: 70px;
+              max-width: 70px;
+              max-height: 70px;
+              object-fit: contain;
+              display: block;
+            "
+          />
+          <h2>CoffeeGO</h2>
+        </div>
+        <ul>
+          <li><a th:href="@{/dashboard}">Bảng điều khiển</a></li>
+          <li><a th:href="@{/admin/coso}">Quản lý cơ sở</a></li>
+          <li class="has-submenu">
+            <a href="#" class="menu-toggle" aria-expanded="false">
+              <span class="menu-label">Quản Lý Người Dùng</span
+              ><span class="chev">▾</span>
+            </a>
+            <ul class="submenu">
+              <li><a th:href="@{/admin/nhanvien}">Quản Lý Nhân Viên</a></li>
+              <li><a th:href="@{/admin/khachhang}">Quản Lý Khách Hàng</a></li>
+            </ul>
+          </li>
+          <li><a th:href="@{/admin/danhmuc}">Quản lý danh mục</a></li>
+          <li class="active">
+            <a th:href="@{/admin/sanpham}">Quản lý sản phẩm</a>
+          </li>
+          <li><a th:href="@{/admin/donhang}">Quản lý đơn hàng</a></li>
+          <li><a th:href="@{/admin/nguyenlieu}">Quản lý nguyên liệu</a></li>
+          <li><a th:href="@{/admin/nhacungcap}">Quản lý nhà cung cấp</a></li>
+          <li><a th:href="@{/admin/kho}">Quản lý kho</a></li>
+          <li><a th:href="@{/admin/magiamgia}">Quản lý mã giảm giá</a></li>
+          <li><a th:href="@{/admin/baocao}">Báo cáo và thống kê</a></li>
+        </ul>
+      </aside>
+
+      <main class="main staff-page">
+        <header class="topbar">
+          <h1>Quản Lý Sản Phẩm</h1>
+          <div
+            class="topbar-right"
+            style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            "
+          >
+            <div class="profile" style="position: relative">
+              <button
+                id="profileBtn"
+                class="profile-btn"
+                aria-expanded="false"
+                style="
+                  background: transparent;
+                  border: 0;
+                  color: inherit;
+                  cursor: pointer;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                "
+              >
+                Admin ▾
+              </button>
+              <div
+                id="profileMenu"
+                class="profile-menu"
+                style="
+                  display: none;
+                  position: absolute;
+                  right: 0;
+                  top: 38px;
+                  background: #fff;
+                  border: 1px solid #e6e6e6;
+                  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                  padding: 6px 0;
+                  border-radius: 6px;
+                  min-width: 140px;
+                  z-index: 40;
+                "
+              >
+                <a
+                  th:href="@{/profile}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Trang cá nhân</a
+                >
+                <a
+                  th:href="@{/truycap/Dangnhap.html}"
+                  style="
+                    display: block;
+                    padding: 8px 12px;
+                    color: #333;
+                    text-decoration: none;
+                  "
+                  >Đăng xuất</a
+                >
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- ACTION BAR -->
+        <section class="page-header">
+          <div class="card">
+            <div class="filters">
+              <div class="search-wrap">
+                <input
+                  type="text"
+                  id="categorySearch"
+                  placeholder="Tìm kiếm sản phẩm..."
+                />
+                <button
+                  class="search-btn"
+                  id="categorySearchBtn"
+                  aria-label="Tìm"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"
+                      stroke="#fff"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 21l-4.35-4.35"
+                      stroke="#fff"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <select id="statusFilter">
+                <option value="">Tất cả</option>
+                <option value="HOẠT ĐỘNG">Hoạt động</option>
+                <option value="VÔ HIỆU">Vô hiệu</option>
+              </select>
+              <button id="addBtn">Thêm Sản Phẩm</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- DANH SÁCH -->
+        <section class="content">
+          <div class="box full">
+            <h3>Danh Sách Sản Phẩm</h3>
+            <div th:if="${successMessage}" class="alert alert-success">
+              <span th:text="${successMessage}"></span>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-error">
+              <span th:text="${errorMessage}"></span>
+            </div>
+            <table class="table-list">
+              <thead>
+                <tr>
+                  <th>Ảnh</th>
+                  <th>Mã sản phẩm</th>
+                  <th>Tên sản phẩm</th>
+                  <th>Giá sản phẩm</th>
+                  <th>Trạng thái</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="sp : ${dsSanPham}"
+                  th:attr="data-status=${sp.trangThai}"
+                >
+                  <!-- ẢNH -->
+                  <td>
+                    <img
+                      th:if="${sp.hinhAnh != null}"
+                      th:src="${#strings.startsWith(sp.hinhAnh, 'http') ? sp.hinhAnh : '/img/' + sp.hinhAnh}"
+                      style="
+                        width: 40px;
+                        height: 40px;
+                        object-fit: cover;
+                        border-radius: 6px;
+                      "
+                    />
+                  </td>
+
+                  <!-- MÃ -->
+                  <td th:text="${sp.sanPhamId}"></td>
+
+                  <!-- TÊN -->
+                  <td th:text="${sp.tenSp}"></td>
+
+                  <!-- GIÁ -->
+                  <td
+                    th:text="${#numbers.formatDecimal(sp.gia,0,'COMMA',0,'POINT')} + ' đ'"
+                  ></td>
+
+                  <!-- TRẠNG THÁI -->
+                  <td class="status-cell">
+                    <span
+                      th:text="${sp.trangThai == 'HOẠT ĐỘNG' ? 'Hoạt động' : (sp.trangThai == 'VÔ HIỆU' ? 'Vô hiệu' : sp.trangThai)}"
+                      th:classappend="
+          ${sp.trangThai == 'VÔ HIỆU'} ? 'status red' :
+          (${sp.trangThai == 'HOẠT ĐỘNG'} ? 'status green' : 'status orange')
+        "
+                    ></span>
+                  </td>
+
+                  <!-- THAO TÁC -->
+                  <td>
+                    <button
+                      class="btn-view open-view"
+                      th:data-id="${sp.sanPhamId}"
+                      th:data-ten="${sp.tenSp}"
+                      th:data-gia="${sp.gia}"
+                      th:data-trangthai="${sp.trangThai}"
+                      th:data-mota="${sp.moTa}"
+                    >
+                      Xem
+                    </button>
+
+                    <button
+                      class="btn-edit open-edit"
+                      th:data-id="${sp.sanPhamId}"
+                      th:data-ten="${sp.tenSp}"
+                      th:data-gia="${sp.gia}"
+                      th:data-mota="${sp.moTa}"
+                      th:data-trangthai="${sp.trangThai}"
+                    >
+                      Sửa
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-delete open-delete"
+                      th:data-id="${sp.sanPhamId}"
+                      th:data-ten="${sp.tenSp}"
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div
+              class="pagination"
+              th:if="${totalPages != null and totalPages > 0}"
+            >
+              <a
+                th:if="${currentPage > 0}"
+                th:href="@{/admin/sanpham(page=${currentPage - 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >‹</a
+              >
+              <span
+                th:unless="${currentPage > 0}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >‹</span
+              >
+              <span class="current" th:text="${currentPage + 1}"></span>
+              <a
+                th:if="${currentPage + 1 < totalPages}"
+                th:href="@{/admin/sanpham(page=${currentPage + 1})}"
+                class="page-btn"
+                style="text-decoration: none; color: inherit"
+                >›</a
+              >
+              <span
+                th:unless="${currentPage + 1 < totalPages}"
+                class="page-btn"
+                style="opacity: 0.45; pointer-events: none"
+                >›</span
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- ================= MODAL THÊM SẢN PHẨM ================= -->
+    <div id="addModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Thêm Sản Phẩm</h2>
+          <button class="close-btn" id="closeModal">×</button>
+        </div>
+
+        <!-- FORM -->
+        <form
+          id="addProductForm"
+          class="modal-body"
+          th:action="@{/admin/sanpham/add}"
+          th:object="${sanPham}"
+          method="post"
+        >
+          <!-- TÊN SẢN PHẨM -->
+          <div class="form-group">
+            <label>Tên sản phẩm</label>
+            <input
+              type="text"
+              name="tenSp"
+              placeholder="Nhập tên sản phẩm"
+              required
+            />
+          </div>
+
+          <!-- DANH MỤC -->
+          <div class="form-group">
+            <label>Danh mục</label>
+            <select name="danhmucId" required>
+              <option value="" disabled selected>- chọn danh mục -</option>
+              <option
+                th:each="dm : ${listDanhMuc}"
+                th:value="${dm.danhmucId}"
+                th:text="${dm.tenDm}"
+              ></option>
+            </select>
+          </div>
+
+          <!-- CÔNG THỨC -->
+          <div class="form-group">
+            <label>Công thức</label>
+
+            <table class="recipe-table" id="recipeTable">
+              <thead>
+                <tr>
+                  <th>Nguyên liệu</th>
+                  <th>Số lượng</th>
+                  <th>Đơn vị</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="addRecipeBody">
+                <tr>
+                  <td>
+                    <select name="nguyenLieuId[]" required>
+                      <option value="" disabled selected>
+                        - chọn nguyên liệu -
+                      </option>
+                    </select>
+                  </td>
+
+                  <td>
+                    <input
+                      type="number"
+                      name="soLuong[]"
+                      min="0"
+                      step="0.001"
+                      placeholder="Số lượng"
+                      required
+                    />
+                  </td>
+
+                  <td>
+                    <select name="donVi[]" required>
+                      <option value="" disabled selected>-chọn-</option>
+                      <option value="kg">kg</option>
+                      <option value="lít">lít</option>
+                      <option value="túi">túi</option>
+                      <option value="hộp">hộp</option>
+                    </select>
+                  </td>
+
+                  <td class="center">
+                    <button type="button" class="btn-delete-row">×</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 8px">
+              <button type="button" class="btn-add-row" id="addRowAdd">
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- KÍCH CỠ + GIÁ -->
+          <div class="form-group">
+            <label>Giá theo kích cỡ</label>
+            <table class="recipe-table" id="addVariantTable">
+              <thead>
+                <tr>
+                  <th>Kích cỡ</th>
+                  <th>Giá bán</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="addVariantBody"></tbody>
+            </table>
+            <div style="margin-top: 8px">
+              <button type="button" class="btn-add-row" id="addVariantRowAdd">
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- HÌNH ẢNH -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hình ảnh</label>
+              <input type="hidden" name="hinhAnh" id="addImageUrl" />
+              <input
+                class="file-input"
+                type="file"
+                id="addFileInput"
+                accept="image/*"
+              />
+              <small
+                id="addUploadStatus"
+                style="display: block; color: #6b7280; margin-top: 6px"
+              ></small>
+            </div>
+          </div>
+
+          <!-- TRẠNG THÁI -->
+          <div class="form-group">
+            <label>Trạng thái</label>
+            <select name="trangThai" required>
+              <option value="HOẠT ĐỘNG">Hoạt động</option>
+              <option value="VÔ HIỆU">Vô hiệu</option>
+            </select>
+          </div>
+
+          <!-- MÔ TẢ -->
+          <div class="form-group">
+            <label>Mô tả</label>
+            <textarea
+              th:field="*{moTa}"
+              class="textarea-desc"
+              placeholder="Nhập mô tả sản phẩm"
+            ></textarea>
+          </div>
+
+          <!-- FOOTER -->
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelBtnFooter">
+              Hủy
+            </button>
+            <button type="submit" class="btn-submit">Thêm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="viewModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Chi Tiết Sản Phẩm</h2>
+          <button class="close-btn" id="closeViewModal">×</button>
+        </div>
+
+        <div class="modal-body">
+          <p><b>Mã:</b> <span id="viewId"></span></p>
+          <p><b>Tên:</b> <span id="viewTen"></span></p>
+          <p><b>Giá mặc định:</b> <span id="viewGia"></span> đ</p>
+          <p><b>Các kích cỡ:</b> <span id="viewVariants">-</span></p>
+          <p><b>Trạng thái:</b> <span id="viewTrangThai"></span></p>
+          <p><b>Mô tả:</b> <span id="viewMoTa"></span></p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="closeViewBtn">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL EDIT ================= -->
+    <div id="editModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Sửa Sản Phẩm</h2>
+          <button class="close-btn" id="closeEditModal">×</button>
+        </div>
+
+        <form
+          id="editProductForm"
+          class="modal-body"
+          th:action="@{/admin/sanpham/update}"
+          method="post"
+        >
+          <input type="hidden" name="sanPhamId" id="editId" />
+          <input type="hidden" name="hinhAnh" id="editImageUrl" />
+
+          <div class="form-group">
+            <label>Tên sản phẩm</label>
+            <input type="text" name="tenSp" id="editTen" required />
+          </div>
+
+          <div class="form-group">
+            <label>Danh mục</label>
+            <select name="danhmucId" id="editDanhMuc" required>
+              <option value="" disabled selected>- chọn danh mục -</option>
+              <option
+                th:each="dm : ${listDanhMuc}"
+                th:value="${dm.danhmucId}"
+                th:text="${dm.tenDm}"
+              ></option>
+            </select>
+          </div>
+
+          <!-- Mô tả moved below status as requested -->
+
+          <!-- CÔNG THỨC (moved to match add modal) -->
+          <div class="form-group">
+            <label>Công thức</label>
+
+            <table class="recipe-table" id="editRecipeTable">
+              <thead>
+                <tr>
+                  <th>Nguyên liệu</th>
+                  <th>Số lượng</th>
+                  <th>Đơn vị</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="editRecipeBody">
+                <tr>
+                  <td>
+                    <select name="nguyenLieuId[]" required>
+                      <option value="" disabled selected>
+                        - chọn nguyên liệu -
+                      </option>
+                    </select>
+                  </td>
+
+                  <td>
+                    <input
+                      type="number"
+                      name="soLuong[]"
+                      min="0"
+                      step="0.001"
+                      placeholder="Số lượng"
+                      required
+                    />
+                  </td>
+
+                  <td>
+                    <select name="donVi[]" required>
+                      <option value="" disabled selected>-chọn-</option>
+                      <option value="kg">kg</option>
+                      <option value="lít">lít</option>
+                      <option value="túi">túi</option>
+                      <option value="hộp">hộp</option>
+                    </select>
+                  </td>
+
+                  <td class="center">
+                    <button type="button" class="btn-delete-row">×</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 8px">
+              <button type="button" class="btn-add-row" id="addRowEdit">
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- KÍCH CỠ + GIÁ -->
+          <div class="form-group">
+            <label>Giá theo kích cỡ</label>
+            <table class="recipe-table" id="editVariantTable">
+              <thead>
+                <tr>
+                  <th>Kích cỡ</th>
+                  <th>Giá bán</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="editVariantBody"></tbody>
+            </table>
+            <div style="margin-top: 8px">
+              <button type="button" class="btn-add-row" id="addVariantRowEdit">
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- TRẠNG THÁI + HÌNH ẢNH -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Trạng thái</label>
+              <select name="trangThai" id="editTrangThai" required>
+                <option value="HOẠT ĐỘNG">Hoạt động</option>
+                <option value="VÔ HIỆU">Vô hiệu</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Hình ảnh (nếu muốn thay)</label>
+              <input
+                class="file-input"
+                type="file"
+                id="editFileInput"
+                accept="image/*"
+              />
+              <small
+                id="editUploadStatus"
+                style="display: block; color: #6b7280; margin-top: 6px"
+              ></small>
+            </div>
+          </div>
+
+          <!-- MÔ TẢ (moved below status) -->
+          <div class="form-group">
+            <label>Mô tả</label>
+            <textarea
+              name="moTa"
+              id="editMoTa"
+              class="textarea-desc"
+              placeholder="Nhập mô tả sản phẩm"
+            ></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelEditBtn">
+              Hủy
+            </button>
+            <button type="submit" class="btn-submit">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Xác Nhận Xóa</h2>
+          <button class="close-btn" id="closeDeleteModal">×</button>
+        </div>
+
+        <form
+          class="modal-body"
+          th:action="@{/admin/sanpham/delete}"
+          method="post"
+        >
+          <input type="hidden" name="id" id="deleteId" />
+
+          <p>
+            Bạn có chắc muốn xóa sản phẩm
+            <b id="deleteTen"></b> không?
+          </p>
+
+          <div class="modal-footer">
+            <button type="button" id="cancelDeleteBtn">Hủy</button>
+            <button type="submit" class="btn-delete">Xóa</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+      window.DS_NGUYEN_LIEU = [];
+      window.CLOUDINARY_CLOUD_NAME = /*[[${cloudinaryCloudName}]]*/ "";
+      window.CLOUDINARY_UPLOAD_PRESET =
+        /*[[${cloudinaryUploadPreset}]]*/ "coffee_upload";
+    </script>
+
+    <script th:src="@{/js/admin-common.js(v=20260307a)}"></script>
+    <script th:src="@{/js/Quanlysanpham.js(v=20260306a)}"></script>
+  </body>
+</html>
