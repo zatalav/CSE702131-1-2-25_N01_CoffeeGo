@@ -20,6 +20,7 @@ import {
 document.addEventListener("DOMContentLoaded", () => {
   const customerId = document.body?.dataset.customerId || "";
   const orderItems = document.getElementById("orderItems");
+  const cartFeedback = document.getElementById("cartFeedback");
   const emptyCart = document.getElementById("emptyCart");
   const cartCountText = document.getElementById("cartCountText");
   const subtotalAmount = document.getElementById("subtotalAmount");
@@ -32,6 +33,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let cartItemsData = [];
   let appliedVoucher = null;
+  let voucherRefreshTimer = null;
+
+  const showFeedback = (message = "") => {
+    if (!cartFeedback) return;
+    const text = String(message || "").trim();
+    cartFeedback.textContent = text;
+    cartFeedback.style.display = text ? "block" : "none";
+  };
+
+  const reportActionError = (actionName, fallbackMessage, error) => {
+    const status = error?.status ? ` (HTTP ${error.status})` : "";
+    const message =
+      String(error?.message || "").trim() ||
+      String(fallbackMessage || "Đã xảy ra lỗi.");
+    showFeedback(`${fallbackMessage}${status}`);
+    console.error(`[checkout] ${actionName} failed`, {
+      action: actionName,
+      status: error?.status || null,
+      message,
+      error,
+    });
+  };
+
+  const scheduleVoucherRefresh = () => {
+    if (!appliedVoucher?.code) return;
+    if (voucherRefreshTimer) clearTimeout(voucherRefreshTimer);
+    voucherRefreshTimer = setTimeout(() => {
+      applyVoucher(appliedVoucher.code, false).catch(console.error);
+      voucherRefreshTimer = null;
+    }, 220);
+  };
 
   const renderSummary = () => {
     const subtotal = calcSubtotal(cartItemsData);
@@ -49,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (emptyCart) emptyCart.style.display = "block";
       if (cartCountText) cartCountText.textContent = "0 sản phẩm";
       appliedVoucher = null;
+      showFeedback("");
       if (voucherMessage) voucherMessage.textContent = "";
       renderSummary();
       return;
@@ -61,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     orderItems.innerHTML = renderCheckoutCartHtml(cartItemsData);
+    showFeedback("");
 
     renderSummary();
   };
@@ -86,7 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       cartItemsData = await getCustomerCartItems(customerId);
     } catch (error) {
-      console.error(error);
+      reportActionError(
+        "load-cart",
+        "Không tải được giỏ hàng. Vui lòng thử lại.",
+        error,
+      );
       return;
     }
 
@@ -129,7 +167,13 @@ document.addEventListener("DOMContentLoaded", () => {
       renderSummary();
       if (voucherMessage)
         voucherMessage.textContent = text || "Không áp dụng được mã giảm giá.";
-      if (showAlert) alert(text || "Không áp dụng được mã giảm giá.");
+      if (showAlert) {
+        reportActionError(
+          "apply-voucher",
+          "Không áp dụng được mã giảm giá.",
+          error,
+        );
+      }
       return false;
     }
   };
@@ -158,12 +202,37 @@ document.addEventListener("DOMContentLoaded", () => {
           qty: nextQty,
         });
       } catch (error) {
-        const text = error?.message || "Không thể cập nhật số lượng.";
-        alert(text || "Không thể cập nhật số lượng.");
+        reportActionError(
+          "update-quantity",
+          "Không thể cập nhật số lượng sản phẩm.",
+          error,
+        );
         return;
       }
 
-      await loadCart();
+      const normalizedSize = String(size || "M")
+        .trim()
+        .toUpperCase();
+      const itemIndex = cartItemsData.findIndex(
+        (item) =>
+          item?.productId === productId &&
+          String(item?.size || "M")
+            .trim()
+            .toUpperCase() === normalizedSize,
+      );
+
+      if (itemIndex >= 0) {
+        if (nextQty <= 0) {
+          cartItemsData.splice(itemIndex, 1);
+        } else {
+          cartItemsData[itemIndex].qty = nextQty;
+          cartItemsData[itemIndex].quantity = nextQty;
+        }
+        renderCart();
+        scheduleVoucherRefresh();
+      } else {
+        await loadCart();
+      }
       return;
     }
 
@@ -176,23 +245,61 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         await removeCustomerCartItem({ customerId, productId, size });
       } catch (error) {
-        const text = error?.message || "Không thể xóa sản phẩm khỏi giỏ.";
-        alert(text || "Không thể xóa sản phẩm khỏi giỏ.");
-        return;
+        console.warn("[checkout] remove endpoint failed, fallback to qty=0", {
+          productId,
+          size,
+          customerId,
+          status: error?.status || null,
+          message: error?.message || null,
+        });
+        try {
+          await updateCustomerCartQty({
+            customerId,
+            productId,
+            size,
+            qty: 0,
+          });
+        } catch (fallbackError) {
+          reportActionError(
+            "remove-item",
+            "Không thể xóa sản phẩm khỏi giỏ hàng.",
+            fallbackError,
+          );
+          return;
+        }
       }
 
-      await loadCart();
+      const normalizedSize = String(size || "M")
+        .trim()
+        .toUpperCase();
+      const nextItems = cartItemsData.filter(
+        (item) =>
+          !(
+            item?.productId === productId &&
+            String(item?.size || "M")
+              .trim()
+              .toUpperCase() === normalizedSize
+          ),
+      );
+
+      if (nextItems.length !== cartItemsData.length) {
+        cartItemsData = nextItems;
+        renderCart();
+        scheduleVoucherRefresh();
+      } else {
+        await loadCart();
+      }
     }
   });
 
   submitOrder?.addEventListener("click", async () => {
     if (!customerId) {
-      alert("Vui lòng đăng ký hoặc đăng nhập.");
+      showFeedback("Vui lòng đăng ký hoặc đăng nhập.");
       return;
     }
 
     if (!Array.isArray(cartItemsData) || cartItemsData.length === 0) {
-      alert("Giỏ hàng đang trống.");
+      showFeedback("Giỏ hàng đang trống.");
       return;
     }
 

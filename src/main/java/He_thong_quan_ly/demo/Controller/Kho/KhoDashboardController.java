@@ -29,6 +29,11 @@ public class KhoDashboardController {
         this.nhanvienRepository = nhanvienRepository;
     }
 
+    @GetMapping({ "", "/" })
+    public String khoRoot() {
+        return "redirect:/kho/dashboard";
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication authentication) {
         long startedAt = System.nanoTime();

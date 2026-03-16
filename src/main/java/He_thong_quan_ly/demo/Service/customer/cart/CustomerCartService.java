@@ -1,10 +1,12 @@
 package He_thong_quan_ly.demo.Service.customer.cart;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,15 +139,29 @@ public class CustomerCartService {
                     .orElse(null);
 
             if (detail == null) {
-                return ResponseEntity.badRequest().body("Không tìm thấy sản phẩm cần xóa trong giỏ");
+                var sameProductDetails = gioHangDetailRepository
+                        .findAllByGioHangIdAndSanPhamId(gioHang.getGioHang_id(), request.getProductId());
+                if (sameProductDetails.size() == 1) {
+                    detail = sameProductDetails.get(0);
+                } else {
+                    return ResponseEntity.badRequest().body("Không tìm thấy sản phẩm cần xóa trong giỏ");
+                }
             }
 
-            gioHangDetailRepository.delete(detail);
+            gioHangDetailRepository.deleteById(detail.getId());
+            gioHangDetailRepository.flush();
             long count = gioHangDetailRepository.sumQuantityByGioHangId(gioHang.getGioHang_id());
             return ResponseEntity.ok(Map.of(
                     "message", "Xóa sản phẩm khỏi giỏ thành công",
                     "count", count));
-        } catch (RuntimeException ex) {
+        } catch (Exception ex) {
+            logger.error(
+                    "Cart remove failed: customerId={}, productId={}, size={}, resolvedCustomerId={}",
+                    request == null ? null : request.getCustomerId(),
+                    request == null ? null : request.getProductId(),
+                    request == null ? null : request.getSize(),
+                    currentCustomerId,
+                    ex);
             return ResponseEntity.badRequest().body("Lỗi xóa sản phẩm khỏi giỏ: " + ex.getMessage());
         }
     }
@@ -219,15 +235,18 @@ public class CustomerCartService {
             return ResponseEntity.ok(List.of());
         }
 
-        var items = gioHangDetailRepository.findByGioHangId(gioHang.getGioHang_id()).stream()
-                .map(this::toCartItem)
+        List<giohang_detail> details = gioHangDetailRepository.findByGioHangId(gioHang.getGioHang_id());
+        PriceLookup priceLookup = buildPriceLookup(details);
+
+        var items = details.stream()
+                .map(detail -> toCartItem(detail, priceLookup))
                 .filter(Objects::nonNull)
                 .toList();
 
         return ResponseEntity.ok(items);
     }
 
-    private Map<String, Object> toCartItem(giohang_detail detail) {
+    private Map<String, Object> toCartItem(giohang_detail detail, PriceLookup priceLookup) {
         var sp = detail.getSanpham();
         if (sp == null) {
             return null;
@@ -239,7 +258,7 @@ public class CustomerCartService {
         }
 
         String size = normalizeSize(rawSize);
-        long unitPrice = resolveUnitPrice(sp.getSanPhamId(), size, sp.getGia());
+        long unitPrice = resolveUnitPrice(priceLookup, sp.getSanPhamId(), size, sp.getGia());
         int qty = Math.max(1, detail.getSoLuong());
 
         Map<String, Object> item = new HashMap<>();
@@ -256,6 +275,64 @@ public class CustomerCartService {
         item.put("milk", defaultText(detail.getMilk()));
         item.put("note", defaultText(detail.getNote()));
         return item;
+    }
+
+    private PriceLookup buildPriceLookup(List<giohang_detail> details) {
+        if (details == null || details.isEmpty()) {
+            return new PriceLookup(Map.of(), Map.of());
+        }
+
+        Set<String> productIds = new LinkedHashSet<>();
+        for (giohang_detail detail : details) {
+            if (detail == null || detail.getSanpham() == null || isBlank(detail.getSanpham().getSanPhamId())) {
+                continue;
+            }
+            productIds.add(detail.getSanpham().getSanPhamId());
+        }
+
+        if (productIds.isEmpty()) {
+            return new PriceLookup(Map.of(), Map.of());
+        }
+
+        Map<String, Long> minPriceByProduct = new HashMap<>();
+        Map<String, Long> priceByProductAndSize = new HashMap<>();
+        for (SanPhamVariant_module variant : variantRepository.findBySanPham_SanPhamIdIn(List.copyOf(productIds))) {
+            if (variant == null || variant.getSanPham() == null || isBlank(variant.getSanPham().getSanPhamId())) {
+                continue;
+            }
+
+            String productId = variant.getSanPham().getSanPhamId();
+            long variantPrice = Math.round(variant.getPrice());
+            minPriceByProduct.merge(productId, variantPrice, Math::min);
+
+            String normalizedSize = normalizeSize(variant.getSize());
+            priceByProductAndSize.put(productSizeKey(productId, normalizedSize), variantPrice);
+        }
+
+        return new PriceLookup(minPriceByProduct, priceByProductAndSize);
+    }
+
+    private long resolveUnitPrice(PriceLookup priceLookup, String sanPhamId, String size, Long fallbackGia) {
+        if (!isBlank(sanPhamId) && priceLookup != null) {
+            Long exact = priceLookup.priceByProductAndSize().get(productSizeKey(sanPhamId, normalizeSize(size)));
+            if (exact != null) {
+                return exact;
+            }
+
+            Long minPrice = priceLookup.minPriceByProduct().get(sanPhamId);
+            if (minPrice != null) {
+                return minPrice;
+            }
+        }
+
+        return fallbackGia == null ? 0L : fallbackGia;
+    }
+
+    private String productSizeKey(String productId, String size) {
+        return productId + "::" + normalizeSize(size);
+    }
+
+    private record PriceLookup(Map<String, Long> minPriceByProduct, Map<String, Long> priceByProductAndSize) {
     }
 
     private giohang_module resolveOrCreateCart(KhachHang_module kh) {

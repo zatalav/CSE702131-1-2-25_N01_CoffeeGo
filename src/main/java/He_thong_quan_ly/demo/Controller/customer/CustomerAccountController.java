@@ -1,6 +1,7 @@
 package He_thong_quan_ly.demo.Controller.customer;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,9 +57,22 @@ public class CustomerAccountController {
     }
 
     @GetMapping("/orders")
-    public String orders(@RequestParam("kh") String khachhangId, Model model) {
-        model.addAttribute("orders", donhangRepository.findByKhachHangIdOrderByNgayDatDesc(khachhangId));
+    public String orders(
+            @RequestParam("kh") String khachhangId,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "30") int size,
+            Model model) {
+        int safePage = Math.max(0, page);
+        int safeSize = Math.max(1, Math.min(size, 50));
+        var resultPage = donhangRepository.findByKhachHangIdOrderByNgayDatDesc(
+                khachhangId,
+                PageRequest.of(safePage, safeSize));
+
+        model.addAttribute("orders", resultPage.getContent());
         model.addAttribute("customerId", khachhangId);
+        model.addAttribute("page", safePage);
+        model.addAttribute("size", safeSize);
+        model.addAttribute("hasMore", resultPage.hasNext());
         return "Customer/Orders";
     }
 

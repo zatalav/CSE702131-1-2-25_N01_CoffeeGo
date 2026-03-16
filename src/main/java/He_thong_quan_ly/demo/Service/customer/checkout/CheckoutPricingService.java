@@ -1,8 +1,12 @@
 package He_thong_quan_ly.demo.Service.customer.checkout;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.time.LocalDate;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,7 @@ public class CheckoutPricingService {
     }
 
     public long calculateSubtotal(List<giohang_detail> cartItems) {
+        PriceLookup priceLookup = buildPriceLookup(cartItems);
         long subtotal = 0L;
         for (var cartItem : cartItems) {
             SanPham_module sp = cartItem.getSanpham();
@@ -38,7 +43,7 @@ public class CheckoutPricingService {
             }
             int qty = Math.max(1, cartItem.getSoLuong());
             String size = resolveCartItemSize(cartItem);
-            long unitPrice = resolveUnitPrice(sp.getSanPhamId(), size, sp.getGia());
+            long unitPrice = resolveUnitPrice(priceLookup, sp.getSanPhamId(), size, sp.getGia());
             subtotal += unitPrice * qty;
         }
         return subtotal;
@@ -46,10 +51,7 @@ public class CheckoutPricingService {
 
     public List<MaGiamGia_module> getActiveVouchers(LocalDate now) {
         LocalDate safeNow = now == null ? LocalDate.now() : now;
-        return magiamgiaRepository.findAll().stream()
-                .filter(v -> v.getTrang_thai() != null && "HOAT_DONG".equalsIgnoreCase(v.getTrang_thai()))
-                .filter(v -> v.getNgay_het_han() == null || !v.getNgay_het_han().isBefore(safeNow))
-                .toList();
+        return magiamgiaRepository.findActiveVouchers(safeNow);
     }
 
     public MaGiamGia_module validateVoucherOrThrow(String code, long subtotal) {
@@ -142,10 +144,70 @@ public class CheckoutPricingService {
         return fallbackGia == null ? 0L : fallbackGia;
     }
 
+    private long resolveUnitPrice(PriceLookup priceLookup, String sanPhamId, String size, Long fallbackGia) {
+        if (sanPhamId != null && !sanPhamId.isBlank() && priceLookup != null) {
+            Long exact = priceLookup.priceByProductAndSize().get(productSizeKey(sanPhamId, normalizeSize(size)));
+            if (exact != null) {
+                return exact;
+            }
+
+            Long minPrice = priceLookup.minPriceByProduct().get(sanPhamId);
+            if (minPrice != null) {
+                return minPrice;
+            }
+        }
+        return fallbackGia == null ? 0L : fallbackGia;
+    }
+
+    private PriceLookup buildPriceLookup(List<giohang_detail> cartItems) {
+        if (cartItems == null || cartItems.isEmpty()) {
+            return new PriceLookup(Map.of(), Map.of());
+        }
+
+        Set<String> productIds = new LinkedHashSet<>();
+        for (giohang_detail cartItem : cartItems) {
+            if (cartItem == null || cartItem.getSanpham() == null) {
+                continue;
+            }
+            String productId = cartItem.getSanpham().getSanPhamId();
+            if (productId == null || productId.isBlank()) {
+                continue;
+            }
+            productIds.add(productId);
+        }
+
+        if (productIds.isEmpty()) {
+            return new PriceLookup(Map.of(), Map.of());
+        }
+
+        Map<String, Long> minPriceByProduct = new HashMap<>();
+        Map<String, Long> priceByProductAndSize = new HashMap<>();
+        for (var variant : variantRepository.findBySanPham_SanPhamIdIn(List.copyOf(productIds))) {
+            if (variant == null || variant.getSanPham() == null || variant.getSanPham().getSanPhamId() == null
+                    || variant.getSanPham().getSanPhamId().isBlank()) {
+                continue;
+            }
+
+            String productId = variant.getSanPham().getSanPhamId();
+            long price = Math.round(variant.getPrice());
+            minPriceByProduct.merge(productId, price, Math::min);
+            priceByProductAndSize.put(productSizeKey(productId, normalizeSize(variant.getSize())), price);
+        }
+
+        return new PriceLookup(minPriceByProduct, priceByProductAndSize);
+    }
+
+    private String productSizeKey(String productId, String size) {
+        return productId + "::" + normalizeSize(size);
+    }
+
     private String normalizeSize(String size) {
         if (size == null || size.isBlank()) {
             return "M";
         }
         return size.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private record PriceLookup(Map<String, Long> minPriceByProduct, Map<String, Long> priceByProductAndSize) {
     }
 }

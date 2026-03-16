@@ -37,4 +37,11 @@ public interface QuanlykhachhangRepository extends JpaRepository<KhachHang_modul
                                     where k.Gmail = :login or k.SDT = :login
                         """)
         Optional<KhachHang_module> findByLogin(@Param("login") String login);
+
+        @Query("""
+                        SELECT COUNT(k)
+                        FROM KhachHang_module k
+                        WHERE k.Trang_thai IS NULL OR upper(k.Trang_thai) <> 'KHOA'
+                        """)
+        long countActiveCustomers();
 }

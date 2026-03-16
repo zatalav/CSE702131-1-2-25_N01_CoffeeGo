@@ -30,10 +30,10 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import He_thong_quan_ly.demo.Module.DTO.OrderCancelRequest;
-import He_thong_quan_ly.demo.Module.DTO.OrderCreateRequest;
 import He_thong_quan_ly.demo.Module.Admin.DonHang_module;
 import He_thong_quan_ly.demo.Module.Admin.SanPham_module;
+import He_thong_quan_ly.demo.Module.DTO.OrderCancelRequest;
+import He_thong_quan_ly.demo.Module.DTO.OrderCreateRequest;
 import He_thong_quan_ly.demo.Service.Admin.QuanlydanhmucService;
 import He_thong_quan_ly.demo.Service.Admin.QuanlydonhangService;
 import He_thong_quan_ly.demo.Service.Admin.QuanlysanphamService;
@@ -104,11 +104,13 @@ public class DonhangController {
         try {
             String username = authentication == null ? null : authentication.getName();
             donhangService.confirmCustomerOrder(orderId, username);
-            redirectAttributes.addFlashAttribute("successMessage", "ÄÃ£ xÃ¡c nháº­n Ä‘Æ¡n hÃ ng " + orderId);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "\u0110\u00e3 x\u00e1c nh\u1eadn \u0111\u01a1n h\u00e0ng " + orderId);
         } catch (RuntimeException ex) {
             redirectAttributes.addFlashAttribute(
                     "errorMessage",
-                    ex.getMessage() == null ? "KhÃ´ng thá»ƒ xÃ¡c nháº­n Ä‘Æ¡n hÃ ng" : ex.getMessage());
+                    ex.getMessage() == null ? "Kh\u00f4ng th\u1ec3 x\u00e1c nh\u1eadn \u0111\u01a1n h\u00e0ng"
+                            : ex.getMessage());
         }
         return "redirect:/nhanvien/donhang-khach";
     }
@@ -137,17 +139,17 @@ public class DonhangController {
             Font titleFont = PdfFontUtil.titleFont(16);
             Font normalFont = PdfFontUtil.normalFont(11);
 
-            Paragraph title = new Paragraph("PHIáº¾U ÄÆ N HÃ€NG", titleFont);
+            Paragraph title = new Paragraph("PHI\u1ebeU \u0110\u01a0N H\u00c0NG", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
             String timestamp = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-            Paragraph time = new Paragraph("NgÃ y táº¡o: " + timestamp, normalFont);
+            Paragraph time = new Paragraph("Ng\u00e0y t\u1ea1o: " + timestamp, normalFont);
             time.setSpacingAfter(10);
             document.add(time);
 
-            Paragraph orderCode = new Paragraph("MÃ£ Ä‘Æ¡n hÃ ng: " + orderId, normalFont);
+            Paragraph orderCode = new Paragraph("M\u00e3 \u0111\u01a1n h\u00e0ng: " + orderId, normalFont);
             orderCode.setSpacingAfter(8);
             document.add(orderCode);
 
@@ -155,11 +157,11 @@ public class DonhangController {
             table.setSpacingBefore(10);
             table.setWidthPercentage(100);
 
-            addHeaderCell(table, "Sáº£n pháº©m");
+            addHeaderCell(table, "S\u1ea3n ph\u1ea9m");
             addHeaderCell(table, "SL");
-            addHeaderCell(table, "ÄÆ¡n giÃ¡");
-            addHeaderCell(table, "ThÃ nh tiá»n");
-            addHeaderCell(table, "YÃªu cáº§u");
+            addHeaderCell(table, "\u0110\u01a1n gi\u00e1");
+            addHeaderCell(table, "Th\u00e0nh ti\u1ec1n");
+            addHeaderCell(table, "Y\u00eau c\u1ea7u");
 
             long subtotal = 0L;
             if (request.getItems() != null) {
@@ -178,13 +180,13 @@ public class DonhangController {
             document.add(table);
 
             Paragraph summary = new Paragraph(
-                    "Táº¡m tÃ­nh: " + formatCurrency(subtotal),
+                    "T\u1ea1m t\u00ednh: " + formatCurrency(subtotal),
                     normalFont);
             summary.setSpacingBefore(12);
             document.add(summary);
 
             if (request.getNote() != null && !request.getNote().isBlank()) {
-                Paragraph note = new Paragraph("Ghi chÃº: " + request.getNote(), normalFont);
+                Paragraph note = new Paragraph("Ghi ch\u00fa: " + request.getNote(), normalFont);
                 note.setSpacingBefore(8);
                 document.add(note);
             }
@@ -222,21 +224,21 @@ public class DonhangController {
             Font titleFont = PdfFontUtil.titleFont(16);
             Font normalFont = PdfFontUtil.normalFont(11);
 
-            Paragraph title = new Paragraph("HÃ“A ÄÆ N Há»¦Y", titleFont);
+            Paragraph title = new Paragraph("H\u00d3A \u0110\u01a0N H\u1ee6Y", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
             String timestamp = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
-            Paragraph time = new Paragraph("NgÃ y há»§y: " + timestamp, normalFont);
+            Paragraph time = new Paragraph("Ng\u00e0y h\u1ee7y: " + timestamp, normalFont);
             time.setSpacingAfter(10);
             document.add(time);
 
-            document.add(new Paragraph("MÃ£ Ä‘Æ¡n hÃ ng: " + orderId, normalFont));
-            document.add(new Paragraph("Tráº¡ng thÃ¡i: ÄÃ£ há»§y", normalFont));
-            document.add(new Paragraph("LÃ½ do: " + (reason == null ? "" : reason), normalFont));
+            document.add(new Paragraph("M\u00e3 \u0111\u01a1n h\u00e0ng: " + orderId, normalFont));
+            document.add(new Paragraph("Tr\u1ea1ng th\u00e1i: \u0110\u00e3 h\u1ee7y", normalFont));
+            document.add(new Paragraph("L\u00fd do: " + (reason == null ? "" : reason), normalFont));
             long tongTien = java.util.Optional.ofNullable(donhang.getTong_tien()).orElse(0L);
-            document.add(new Paragraph("Tá»•ng tiá»n: " + formatCurrency(tongTien), normalFont));
+            document.add(new Paragraph("T\u1ed5ng ti\u1ec1n: " + formatCurrency(tongTien), normalFont));
 
             document.close();
 
@@ -272,20 +274,20 @@ public class DonhangController {
         }
         if (item.getSugar() != null && !item.getSugar().isBlank()) {
             appendSeparator(builder);
-            builder.append("ÄÆ°á»ng: ").append(item.getSugar());
+            builder.append("\u0110\u01b0\u1eddng: ").append(item.getSugar());
         }
         if (item.getIce() != null && !item.getIce().isBlank()) {
             appendSeparator(builder);
-            builder.append("ÄÃ¡: ").append(item.getIce());
+            builder.append("\u0110\u00e1: ").append(item.getIce());
         }
         if (item.getMilk() != null && !item.getMilk().isBlank()) {
             appendSeparator(builder);
-            builder.append("Sá»¯a: ").append(item.getMilk());
+            builder.append("S\u1eefa: ").append(item.getMilk());
         }
         if (item.getNote() != null && !item.getNote().isBlank()) {
             if (builder.length() > 0)
                 appendSeparator(builder);
-            builder.append("Ghi chÃº: ").append(item.getNote());
+            builder.append("Ghi ch\u00fa: ").append(item.getNote());
         }
 
         return builder.length() == 0 ? "-" : builder.toString();

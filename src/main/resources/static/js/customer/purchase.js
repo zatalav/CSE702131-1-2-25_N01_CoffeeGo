@@ -52,6 +52,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let shippingDistanceKm = 0;
   let shippingNearestBranch = "";
   let shippingReady = false;
+  let voucherRefreshTimer = null;
+
+  const scheduleVoucherRefresh = () => {
+    if (!appliedVoucher?.code) return;
+    if (voucherRefreshTimer) clearTimeout(voucherRefreshTimer);
+    voucherRefreshTimer = setTimeout(() => {
+      applyVoucher(appliedVoucher.code, false).catch(console.error);
+      voucherRefreshTimer = null;
+    }, 220);
+  };
 
   const renderSummary = () => {
     const subtotal = calcSubtotal(cartItemsData);
@@ -209,7 +219,29 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    await loadCart();
+    const normalizedSize = String(size || "M")
+      .trim()
+      .toUpperCase();
+    const itemIndex = cartItemsData.findIndex(
+      (item) =>
+        item?.productId === productId &&
+        String(item?.size || "M")
+          .trim()
+          .toUpperCase() === normalizedSize,
+    );
+
+    if (itemIndex >= 0) {
+      if (nextQty <= 0) {
+        cartItemsData.splice(itemIndex, 1);
+      } else {
+        cartItemsData[itemIndex].qty = nextQty;
+        cartItemsData[itemIndex].quantity = nextQty;
+      }
+      renderCart();
+      scheduleVoucherRefresh();
+    } else {
+      await loadCart();
+    }
   });
 
   applyVoucherBtn?.addEventListener("click", async () => {

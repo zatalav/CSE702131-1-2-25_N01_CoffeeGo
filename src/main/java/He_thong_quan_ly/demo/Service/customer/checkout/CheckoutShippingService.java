@@ -8,27 +8,28 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import He_thong_quan_ly.demo.Module.Admin.CoSo_module;
 import He_thong_quan_ly.demo.Module.Admin.NhanVien_module;
-import He_thong_quan_ly.demo.Repository.Admin.QuanlycosoRepository;
 import He_thong_quan_ly.demo.Repository.Admin.QuanlynhanvienRepository;
+import He_thong_quan_ly.demo.Service.Admin.QuanlycosoService;
 
 @Service
 public class CheckoutShippingService {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckoutShippingService.class);
 
-    private final QuanlycosoRepository cosoRepository;
+    private final QuanlycosoService cosoService;
     private final QuanlynhanvienRepository nhanvienRepository;
     private final ShippingDistanceResolver shippingDistanceResolver;
 
     public CheckoutShippingService(
-            QuanlycosoRepository cosoRepository,
+            QuanlycosoService cosoService,
             QuanlynhanvienRepository nhanvienRepository,
             ShippingDistanceResolver shippingDistanceResolver) {
-        this.cosoRepository = cosoRepository;
+        this.cosoService = cosoService;
         this.nhanvienRepository = nhanvienRepository;
         this.shippingDistanceResolver = shippingDistanceResolver;
     }
@@ -37,8 +38,9 @@ public class CheckoutShippingService {
         return shippingDistanceResolver.isGoogleKeyConfigured();
     }
 
+    @Cacheable(value = "customerShippingEstimate", key = "#destinationAddress.trim().toLowerCase()", condition = "#destinationAddress != null && !#destinationAddress.isBlank()")
     public ShippingResult calculateShippingFromNearestBranch(String destinationAddress) {
-        List<CoSo_module> branches = cosoRepository.findAll();
+        List<CoSo_module> branches = cosoService.findAll();
         if (branches == null || branches.isEmpty()) {
             throw new RuntimeException("Khong tim thay co so quan de tinh phi ship");
         }
@@ -80,6 +82,7 @@ public class CheckoutShippingService {
         return new ShippingResult(finalDistanceKm, shippingFee, nearestBranchName, nearestBranchId);
     }
 
+    @Cacheable(value = "customerServingStaffByBranch", key = "#cosoId", condition = "#cosoId != null && !#cosoId.isBlank()")
     public NhanVien_module resolveServingNhanVienForBranch(String cosoId) {
         if (cosoId == null || cosoId.isBlank()) {
             throw new RuntimeException("Khong xac dinh duoc co so gan nhat de gan nhan vien phu trach");
@@ -99,7 +102,7 @@ public class CheckoutShippingService {
     }
 
     public Map<String, Object> buildShippingDiagnostic(String destinationAddress) {
-        List<CoSo_module> branches = cosoRepository.findAll();
+        List<CoSo_module> branches = cosoService.findAll();
         List<Map<String, Object>> branchResults = new java.util.ArrayList<>();
         Double bestDistanceKm = null;
         String bestBranchName = "";

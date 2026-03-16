@@ -39,6 +39,14 @@
             ></strong>
           </div>
         </a>
+
+        <a
+          class="back-link"
+          th:if="${hasMore}"
+          th:href="@{/customer/orders(kh=${customerId},page=${page + 1},size=${size})}"
+        >
+          Xem thêm đơn cũ
+        </a>
       </section>
 
       <section

@@ -2,13 +2,13 @@ package He_thong_quan_ly.demo.Service.Kho;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,52 +39,34 @@ public class KhoDashboardService {
         @Cacheable("khoDashboardData")
         public Map<String, Object> buildDashboardData() {
                 Map<String, Object> data = new LinkedHashMap<>();
+                LocalDate today = LocalDate.now();
+                LocalDate sevenDaysAgo = today.minusDays(6);
 
-                List<NguyenLieu_module> nguyenLieuList = nguyenlieuRepository.findAll();
-                int totalStock = nguyenLieuList.stream().mapToInt(NguyenLieu_module::getSlTon).sum();
-                long lowStockCount = nguyenLieuList.stream().filter(nl -> nl.getSlTon() > 0 && nl.getSlTon() < 10)
-                                .count();
-                long expirySoonCount = nguyenLieuList.stream()
-                                .filter(nl -> nl.getHanSuDung() != null)
-                                .filter(nl -> !nl.getHanSuDung().isBefore(LocalDate.now()))
-                                .filter(nl -> !nl.getHanSuDung().isAfter(LocalDate.now().plusDays(7)))
-                                .count();
+                int totalStock = Math.toIntExact(nguyenlieuRepository.sumSlTon());
+                long lowStockCount = nguyenlieuRepository.countLowStock(10);
+                long expirySoonCount = nguyenlieuRepository.countExpiryBetween(today, today.plusDays(7));
 
-                List<NhapKho_module> nhapList = nhapKhoRepository.findAllOrderByNgayNhapDesc();
-                List<XuatKho_module> xuatList = xuatKhoRepository.findAllOrderByNgayXuatDesc();
+                List<NhapKho_module> recentNhap = nhapKhoRepository.findRecent(PageRequest.of(0, 5));
+                List<XuatKho_module> recentXuat = xuatKhoRepository.findRecent(PageRequest.of(0, 5));
+                long pendingNhapCount = nhapKhoRepository.countFromDate(today.minusDays(7));
 
-                long pendingNhapCount = nhapList.stream()
-                                .filter(nk -> nk.getNgayNhap() != null
-                                                && !nk.getNgayNhap().isBefore(LocalDate.now().minusDays(7)))
-                                .count();
+                List<NguyenLieu_module> lowStockItems = nguyenlieuRepository.findTopLowStock(10, PageRequest.of(0, 4));
+                List<NguyenLieu_module> topNguyenLieu = nguyenlieuRepository
+                                .findTopByEarliestExpiry(PageRequest.of(0, 4));
 
-                List<NguyenLieu_module> lowStockItems = nguyenLieuList.stream()
-                                .filter(nl -> nl.getSlTon() <= 10)
-                                .sorted(Comparator.comparingInt(NguyenLieu_module::getSlTon))
-                                .limit(4)
-                                .toList();
+                Map<LocalDate, Long> nhapByDate = nhapKhoRepository.countByDateRange(sevenDaysAgo, today).stream()
+                                .collect(Collectors.toMap(NhapKhoRepository.DateCountView::getNgay,
+                                                NhapKhoRepository.DateCountView::getTotal));
 
-                List<NguyenLieu_module> topNguyenLieu = nguyenLieuList.stream()
-                                .sorted(Comparator.comparing(NguyenLieu_module::getHanSuDung,
-                                                Comparator.nullsLast(Comparator.naturalOrder())))
-                                .limit(4)
-                                .toList();
-
-                List<NhapKho_module> recentNhap = nhapList.stream().limit(5).toList();
-                List<XuatKho_module> recentXuat = xuatList.stream().limit(5).toList();
-
-                Map<LocalDate, Long> nhapByDate = nhapList.stream()
-                                .filter(nk -> nk.getNgayNhap() != null)
-                                .collect(Collectors.groupingBy(NhapKho_module::getNgayNhap, Collectors.counting()));
-                Map<LocalDate, Long> xuatByDate = xuatList.stream()
-                                .filter(xk -> xk.getNgayXuat() != null)
-                                .collect(Collectors.groupingBy(XuatKho_module::getNgayXuat, Collectors.counting()));
+                Map<LocalDate, Long> xuatByDate = xuatKhoRepository.countByDateRange(sevenDaysAgo, today).stream()
+                                .collect(Collectors.toMap(XuatKhoRepository.DateCountView::getNgay,
+                                                XuatKhoRepository.DateCountView::getTotal));
 
                 List<String> labels = new ArrayList<>();
                 List<Long> nhapSeries = new ArrayList<>();
                 List<Long> xuatSeries = new ArrayList<>();
                 for (int i = 6; i >= 0; i--) {
-                        LocalDate day = LocalDate.now().minusDays(i);
+                        LocalDate day = today.minusDays(i);
                         labels.add(day.toString());
                         nhapSeries.add(nhapByDate.getOrDefault(day, 0L));
                         xuatSeries.add(xuatByDate.getOrDefault(day, 0L));

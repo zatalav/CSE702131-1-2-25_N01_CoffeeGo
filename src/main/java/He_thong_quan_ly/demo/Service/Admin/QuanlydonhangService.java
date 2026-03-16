@@ -154,22 +154,29 @@ public class QuanlydonhangService {
             return;
         }
 
-        for (NguyenLieu_module nl : nguyenLieuRepo.findAll()) {
-            if (nl == null || nl.getNguyenlieuId() == null) {
-                continue;
-            }
-            if (!khoBepRepository.existsByCoSo_CosoIdAndNguyenLieu_NguyenlieuId(
-                    cosoId, nl.getNguyenlieuId())) {
+        int page = 0;
+        final int batchSize = 500;
+        Page<NguyenLieu_module> chunk;
+        do {
+            chunk = nguyenLieuRepo.findAll(PageRequest.of(page, batchSize));
+            for (NguyenLieu_module nl : chunk.getContent()) {
+                if (nl == null || nl.getNguyenlieuId() == null) {
+                    continue;
+                }
+                if (!khoBepRepository.existsByCoSo_CosoIdAndNguyenLieu_NguyenlieuId(
+                        cosoId, nl.getNguyenlieuId())) {
 
-                Khobep_module kb = new Khobep_module();
-                kb.setNguyenlieuId(nl.getNguyenlieuId());
-                kb.setCoSo(nhanVien.getCoSo());
-                kb.setNguyenLieu(nl);
-                kb.setDonVi(nl.getDonVi());
-                kb.setSlTon(0);
-                khoBepRepository.save(kb);
+                    Khobep_module kb = new Khobep_module();
+                    kb.setNguyenlieuId(nl.getNguyenlieuId());
+                    kb.setCoSo(nhanVien.getCoSo());
+                    kb.setNguyenLieu(nl);
+                    kb.setDonVi(nl.getDonVi());
+                    kb.setSlTon(0);
+                    khoBepRepository.save(kb);
+                }
             }
-        }
+            page++;
+        } while (chunk.hasNext());
     }
 
     public String getCoSoIdByUsername(String username) {
@@ -311,9 +318,16 @@ public class QuanlydonhangService {
         DateTimeFormatter timeFormatter = TIME_FORMATTER;
         NumberFormat numberFormat = orderViewMapper.vnNumberFormat();
 
-        for (DonHang_module dh : donhangRepo.findAll()) {
-            rows.add(orderViewMapper.toAdminRow(dh, dateFormatter, timeFormatter, numberFormat));
-        }
+        int page = 0;
+        final int batchSize = 500;
+        Page<DonHang_module> chunk;
+        do {
+            chunk = donhangRepo.findAllForAdminPaged(PageRequest.of(page, batchSize));
+            for (DonHang_module dh : chunk.getContent()) {
+                rows.add(orderViewMapper.toAdminRow(dh, dateFormatter, timeFormatter, numberFormat));
+            }
+            page++;
+        } while (chunk.hasNext());
 
         return rows;
     }

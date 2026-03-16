@@ -1,5 +1,6 @@
 package He_thong_quan_ly.demo.Repository.NhanVienKho;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +16,12 @@ import He_thong_quan_ly.demo.Module.NhanVienKho.NhapKho_module;
 @Repository
 public interface NhapKhoRepository extends JpaRepository<NhapKho_module, String> {
 
+    interface DateCountView {
+        LocalDate getNgay();
+
+        Long getTotal();
+    }
+
     @Query(value = "SELECT nhapkho_id FROM nhap_kho ORDER BY nhapkho_id DESC LIMIT 1", nativeQuery = true)
     String findLatestId();
 
@@ -26,7 +33,30 @@ public interface NhapKhoRepository extends JpaRepository<NhapKho_module, String>
             """)
     List<NhapKho_module> findAllOrderByNgayNhapDesc();
 
-    @EntityGraph(attributePaths = { "nhanvien" })
+    @EntityGraph(attributePaths = { "nhanVien" })
+    @Query("""
+            SELECT nk
+            FROM NhapKho_module nk
+            ORDER BY nk.ngayNhap DESC
+            """)
+    List<NhapKho_module> findRecent(Pageable pageable);
+
+    @Query("""
+            SELECT COUNT(nk)
+            FROM NhapKho_module nk
+            WHERE nk.ngayNhap IS NOT NULL AND nk.ngayNhap >= :fromDate
+            """)
+    long countFromDate(@Param("fromDate") LocalDate fromDate);
+
+    @Query("""
+            SELECT nk.ngayNhap AS ngay, COUNT(nk) AS total
+            FROM NhapKho_module nk
+            WHERE nk.ngayNhap BETWEEN :fromDate AND :toDate
+            GROUP BY nk.ngayNhap
+            """)
+    List<DateCountView> countByDateRange(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
+
+    @EntityGraph(attributePaths = { "nhanVien" })
     @Query("""
             SELECT nk
             FROM NhapKho_module nk

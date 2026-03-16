@@ -31,6 +31,7 @@ public class ShippingDistanceResolver {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final Map<String, double[]> geocodeCache = new ConcurrentHashMap<>();
+    private final Map<String, Double> distanceCacheKm = new ConcurrentHashMap<>();
 
     @Value("${google.maps.api.key:}")
     private String googleMapsApiKey;
@@ -40,11 +41,23 @@ public class ShippingDistanceResolver {
     }
 
     public Double resolveDistanceKm(String originAddress, String destinationAddress) {
+        String cacheKey = buildDistanceKey(originAddress, destinationAddress);
+        Double cachedDistance = distanceCacheKm.get(cacheKey);
+        if (cachedDistance != null) {
+            return cachedDistance;
+        }
+
         Double distanceKm = fetchDistanceKmByGoogleMaps(originAddress, destinationAddress);
         if (distanceKm != null) {
+            distanceCacheKm.put(cacheKey, distanceKm);
             return distanceKm;
         }
-        return estimateDistanceKmByAddress(originAddress, destinationAddress);
+
+        Double estimatedDistance = estimateDistanceKmByAddress(originAddress, destinationAddress);
+        if (estimatedDistance != null) {
+            distanceCacheKm.put(cacheKey, estimatedDistance);
+        }
+        return estimatedDistance;
     }
 
     public Map<String, Object> buildDistanceDiagnostic(String originAddress, String destinationAddress) {
@@ -362,6 +375,10 @@ public class ShippingDistanceResolver {
             return "";
         }
         return address.trim().toLowerCase(Locale.ROOT);
+    }
+
+    private String buildDistanceKey(String originAddress, String destinationAddress) {
+        return normalizeAddressKey(originAddress) + " -> " + normalizeAddressKey(destinationAddress);
     }
 
     private String tryFixMojibake(String text) {

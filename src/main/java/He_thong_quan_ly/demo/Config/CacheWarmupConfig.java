@@ -6,8 +6,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import He_thong_quan_ly.demo.Repository.Admin.QuanlynhanvienRepository;
+import He_thong_quan_ly.demo.Service.Admin.QuanlydanhmucService;
+import He_thong_quan_ly.demo.Service.Admin.QuanlysanphamService;
 import He_thong_quan_ly.demo.Service.Admin.QuanlydonhangService;
+import He_thong_quan_ly.demo.Service.Kho.KhoDashboardService;
 import He_thong_quan_ly.demo.Service.Kho.KhoMasterDataService;
+import He_thong_quan_ly.demo.Service.Kho.NhapKhoService;
+import He_thong_quan_ly.demo.Service.Kho.XuatKhoService;
+import He_thong_quan_ly.demo.Service.customer.checkout.CheckoutPricingService;
+import He_thong_quan_ly.demo.Service.customer.checkout.CheckoutShippingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,13 +24,24 @@ import lombok.extern.slf4j.Slf4j;
 public class CacheWarmupConfig {
 
     private final KhoMasterDataService khoMasterDataService;
+    private final KhoDashboardService khoDashboardService;
+    private final NhapKhoService nhapKhoService;
+    private final XuatKhoService xuatKhoService;
     private final QuanlydonhangService quanlydonhangService;
     private final QuanlynhanvienRepository quanlynhanvienRepository;
+    private final QuanlysanphamService quanlysanphamService;
+    private final QuanlydanhmucService quanlydanhmucService;
+    private final CheckoutPricingService checkoutPricingService;
+    private final CheckoutShippingService checkoutShippingService;
 
     @EventListener(ApplicationReadyEvent.class)
     public void warmupKhoMasterDataCache() {
         try {
             khoMasterDataService.getMasterData();
+            khoDashboardService.buildDashboardData();
+            nhapKhoService.findPaged(0, 20, "");
+            xuatKhoService.findPaged(0, 20, "");
+            xuatKhoService.findTonKhoPaged(PageRequest.of(0, 20), "");
             log.info("Kho master-data cache warmed up successfully");
         } catch (Exception ex) {
             log.warn("Unable to warm up kho master-data cache at startup: {}", ex.getMessage());
@@ -50,6 +68,19 @@ public class CacheWarmupConfig {
             log.info("Delivery caches warmed up successfully");
         } catch (Exception ex) {
             log.warn("Unable to warm up delivery caches at startup: {}", ex.getMessage());
+        }
+
+        try {
+            // Warm core customer browsing caches.
+            quanlysanphamService.findActiveProductsPaged(24);
+            quanlydanhmucService.findAll();
+            checkoutPricingService.getActiveVouchers(java.time.LocalDate.now());
+
+            // Warm one shipping estimate entry to reduce first-hit latency.
+            checkoutShippingService.calculateShippingFromNearestBranch("Dong Da, Ha Noi, Vietnam");
+            log.info("Customer menu/checkout caches warmed up successfully");
+        } catch (Exception ex) {
+            log.warn("Unable to warm up customer caches at startup: {}", ex.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package He_thong_quan_ly.demo.Repository.Admin;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -45,5 +46,50 @@ public interface QuanlynguyenlieuRepository
                     OR lower(coalesce(nl.trangThai, '')) LIKE lower(concat('%', :keyword, '%')))
             """)
     Page<NguyenLieu_module> findPagedForKho(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("""
+            SELECT COALESCE(SUM(nl.slTon), 0)
+            FROM NguyenLieu_module nl
+            """)
+    long sumSlTon();
+
+    @Query("""
+            SELECT COUNT(nl)
+            FROM NguyenLieu_module nl
+            WHERE nl.slTon > 0 AND nl.slTon < :threshold
+            """)
+    long countLowStock(@Param("threshold") int threshold);
+
+    @Query("""
+            SELECT COUNT(nl)
+            FROM NguyenLieu_module nl
+            WHERE nl.hanSuDung IS NOT NULL
+              AND nl.hanSuDung BETWEEN :fromDate AND :toDate
+            """)
+    long countExpiryBetween(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
+
+    @Query("""
+            SELECT nl
+            FROM NguyenLieu_module nl
+            WHERE nl.slTon <= :threshold
+            ORDER BY nl.slTon ASC
+            """)
+    List<NguyenLieu_module> findTopLowStock(@Param("threshold") int threshold, Pageable pageable);
+
+    @Query("""
+            SELECT nl
+            FROM NguyenLieu_module nl
+            ORDER BY
+                CASE WHEN nl.hanSuDung IS NULL THEN 1 ELSE 0 END,
+                nl.hanSuDung ASC
+            """)
+    List<NguyenLieu_module> findTopByEarliestExpiry(Pageable pageable);
+
+    @Query("""
+                SELECT nl
+                FROM NguyenLieu_module nl
+                ORDER BY nl.slTon ASC
+            """)
+    List<NguyenLieu_module> findTopBySlTonAsc(Pageable pageable);
 
 }

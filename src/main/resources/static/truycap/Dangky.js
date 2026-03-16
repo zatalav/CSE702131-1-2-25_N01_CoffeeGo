@@ -137,11 +137,12 @@ if (completeBtn) {
         ngaySinh,
         diaChi,
       });
-      if (payload.redirect) {
-        window.location.href = payload.redirect;
-        return;
-      }
-      showAlert("Đăng ký thành công.", true);
+      const nextUrl =
+        typeof payload.redirect === "string" && payload.redirect.trim()
+          ? payload.redirect.trim()
+          : "/customer/menu?registered=1";
+      window.location.href = nextUrl;
+      return;
     } catch (err) {
       showAlert(err.message, false);
     } finally {

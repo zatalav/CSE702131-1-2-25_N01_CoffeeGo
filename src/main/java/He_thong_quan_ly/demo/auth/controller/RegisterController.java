@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import He_thong_quan_ly.demo.auth.dto.PendingRegisterOtp;
 import He_thong_quan_ly.demo.Module.Admin.KhachHang_module;
 import He_thong_quan_ly.demo.Repository.Admin.QuanlykhachhangRepository;
+import He_thong_quan_ly.demo.Util.VnDateParser;
+import He_thong_quan_ly.demo.Util.VnIdentityValidator;
+import He_thong_quan_ly.demo.auth.dto.PendingRegisterOtp;
 import He_thong_quan_ly.demo.auth.service.AuthSecurityService;
 import He_thong_quan_ly.demo.auth.service.PendingRegisterCacheService;
 import He_thong_quan_ly.demo.auth.util.EmailValidatorUtil;
-import He_thong_quan_ly.demo.Util.VnDateParser;
-import He_thong_quan_ly.demo.Util.VnIdentityValidator;
 
 @Controller
 public class RegisterController {
@@ -65,7 +65,8 @@ public class RegisterController {
         String confirmPassword = safe(payload.get("confirmPassword"));
 
         if (normalizedGmail.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Email kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng"));
         }
         if (!EmailValidatorUtil.isValid(normalizedGmail)) {
             return ResponseEntity.badRequest().body(Map.of("message", "Email khong dung dinh dang"));
@@ -74,18 +75,18 @@ public class RegisterController {
                 password,
                 confirmPassword,
                 6,
-                "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng",
-                "Máº­t kháº©u tá»‘i thiá»ƒu 6 kÃ½ tá»±",
-                "Máº­t kháº©u xÃ¡c nháº­n khÃ´ng khá»›p");
+                "M\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng",
+                "M\u1eadt kh\u1ea9u t\u1ed1i thi\u1ec3u 6 k\u00fd t\u1ef1",
+                "M\u1eadt kh\u1ea9u x\u00e1c nh\u1eadn kh\u00f4ng kh\u1edbp");
         if (passwordError.isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("message", passwordError.get()));
         }
         if (khachhangRepository.existsByGmailIgnoreCase(normalizedGmail)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Email Ä‘Ã£ tá»“n táº¡i"));
+            return ResponseEntity.badRequest().body(Map.of("message", "Email \u0111\u00e3 t\u1ed3n t\u1ea1i"));
         }
         if (!authSecurityService.isMailConfigured()) {
             return ResponseEntity.internalServerError()
-                    .body(Map.of("message", "ChÆ°a cáº¥u hÃ¬nh gá»­i email OTP"));
+                    .body(Map.of("message", "Ch\u01b0a c\u1ea5u h\u00ecnh g\u1eedi email OTP"));
         }
 
         String otp = authSecurityService.generateNumericOtp(OTP_LENGTH);
@@ -100,16 +101,17 @@ public class RegisterController {
 
         Optional<String> sendError = authSecurityService.sendOtpEmail(
                 normalizedGmail,
-                "CoffeeGo - MÃ£ xÃ¡c thá»±c OTP",
-                "MÃ£ OTP cá»§a báº¡n lÃ : " + otp + "\nMÃ£ cÃ³ hiá»‡u lá»±c trong 5 phÃºt.",
-                "Dá»‹ch vá»¥ gá»­i email chÆ°a sáºµn sÃ ng",
-                "KhÃ´ng gá»­i Ä‘Æ°á»£c email OTP. Vui lÃ²ng kiá»ƒm tra cáº¥u hÃ¬nh SMTP.");
+                "CoffeeGo - M\u00e3 x\u00e1c th\u1ef1c OTP",
+                "M\u00e3 OTP c\u1ee7a b\u1ea1n l\u00e0: " + otp
+                        + "\nM\u00e3 c\u00f3 hi\u1ec7u l\u1ef1c trong 5 ph\u00fat.",
+                "D\u1ecbch v\u1ee5 g\u1eedi email ch\u01b0a s\u1eb5n s\u00e0ng",
+                "Kh\u00f4ng g\u1eedi \u0111\u01b0\u1ee3c email OTP. Vui l\u00f2ng ki\u1ec3m tra c\u1ea5u h\u00ecnh SMTP.");
         if (sendError.isPresent()) {
             clearPending(session, normalizedGmail);
             return ResponseEntity.internalServerError().body(Map.of("message", sendError.get()));
         }
 
-        return ResponseEntity.ok(Map.of("message", "ÄÃ£ gá»­i mÃ£ OTP vá» email"));
+        return ResponseEntity.ok(Map.of("message", "\u0110\u00e3 g\u1eedi m\u00e3 OTP v\u1ec1 email"));
     }
 
     @PostMapping("/register/verify-otp")
@@ -121,18 +123,19 @@ public class RegisterController {
         PendingRegisterOtp pending = getPending(session);
         if (pending == null) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("message", "OTP khÃ´ng tá»“n táº¡i hoáº·c Ä‘Ã£ háº¿t háº¡n"));
+                    .body(Map.of("message",
+                            "OTP kh\u00f4ng t\u1ed3n t\u1ea1i ho\u1eb7c \u0111\u00e3 h\u1ebft h\u1ea1n"));
         }
         if (authSecurityService.isOtpExpired(pending.expiresAt())) {
             clearPending(session, pending.gmail());
-            return ResponseEntity.badRequest().body(Map.of("message", "OTP Ä‘Ã£ háº¿t háº¡n"));
+            return ResponseEntity.badRequest().body(Map.of("message", "OTP \u0111\u00e3 h\u1ebft h\u1ea1n"));
         }
         if (!pending.otp().equals(otp)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "OTP khÃ´ng Ä‘Ãºng"));
+            return ResponseEntity.badRequest().body(Map.of("message", "OTP kh\u00f4ng \u0111\u00fang"));
         }
 
         pendingRegisterCacheService.put(pending.gmail(), pending.markVerified());
-        return ResponseEntity.ok(Map.of("message", "XÃ¡c thá»±c OTP thÃ nh cÃ´ng"));
+        return ResponseEntity.ok(Map.of("message", "X\u00e1c th\u1ef1c OTP th\u00e0nh c\u00f4ng"));
     }
 
     @PostMapping("/register/complete")
@@ -142,17 +145,19 @@ public class RegisterController {
             jakarta.servlet.http.HttpSession session) {
         PendingRegisterOtp pending = getPending(session);
         if (pending == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Vui lÃ²ng xÃ¡c thá»±c OTP trÆ°á»›c"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Vui l\u00f2ng x\u00e1c th\u1ef1c OTP tr\u01b0\u1edbc"));
         }
         if (authSecurityService.isOtpExpired(pending.expiresAt())) {
             clearPending(session, pending.gmail());
-            return ResponseEntity.badRequest().body(Map.of("message", "OTP Ä‘Ã£ háº¿t háº¡n"));
+            return ResponseEntity.badRequest().body(Map.of("message", "OTP \u0111\u00e3 h\u1ebft h\u1ea1n"));
         }
 
         String otp = safe(payload.get("otp"));
         boolean otpAccepted = pending.verified() || (!otp.isBlank() && pending.otp().equals(otp));
         if (!otpAccepted) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Vui lÃ²ng xÃ¡c thá»±c OTP trÆ°á»›c"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Vui l\u00f2ng x\u00e1c th\u1ef1c OTP tr\u01b0\u1edbc"));
         }
 
         String tenKh = safe(payload.get("tenKh"));
@@ -169,11 +174,13 @@ public class RegisterController {
         }
 
         if (tenKh.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Há» tÃªn khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "H\u1ecd t\u00ean kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng"));
         }
         if (sdt.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("message", "Sá»‘ Ä‘iá»‡n thoáº¡i khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"));
+                    .body(Map.of("message",
+                            "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng"));
         }
         final String normalizedSdt;
         try {
@@ -182,10 +189,11 @@ public class RegisterController {
             return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
         }
         if (khachhangRepository.existsBySDT(normalizedSdt)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Sá»‘ Ä‘iá»‡n thoáº¡i Ä‘Ã£ tá»“n táº¡i"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i \u0111\u00e3 t\u1ed3n t\u1ea1i"));
         }
 
-        LocalDate ngaySinh = VnDateParser.parseOptional(ngaySinhText, "NgÃ y sinh");
+        LocalDate ngaySinh = VnDateParser.parseOptional(ngaySinhText, "Ng\u00e0y sinh");
 
         KhachHang_module kh = new KhachHang_module();
         kh.setKhachhang_id(generateKhachHangId());
@@ -193,7 +201,7 @@ public class RegisterController {
         kh.setGmail(pending.gmail());
         kh.setSDT(normalizedSdt);
         kh.setPassword(pending.password());
-        kh.setGioi_tinh(gioiTinh.isBlank() ? "KhÃ¡c" : gioiTinh);
+        kh.setGioi_tinh(gioiTinh.isBlank() ? "Kh\u00e1c" : gioiTinh);
         kh.setNgay_sinh(ngaySinh);
         kh.setDia_chi(diaChi);
         kh.setTong_so_DH_mua(0);
@@ -219,13 +227,14 @@ public class RegisterController {
 
         String normalizedGmail = EmailValidatorUtil.normalize(gmail);
         if (normalizedGmail.isBlank()) {
-            return redirectError("Email khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+            return redirectError("Email kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng");
         }
         if (!EmailValidatorUtil.isValid(normalizedGmail)) {
             return redirectError("Email khong dung dinh dang");
         }
         if (sdt == null || sdt.isBlank()) {
-            return redirectError("Sá»‘ Ä‘iá»‡n thoáº¡i khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
+            return redirectError(
+                    "S\u1ed1 \u0111i\u1ec7n tho\u1ea1i kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng");
         }
         final String normalizedSdt;
         try {
@@ -237,17 +246,17 @@ public class RegisterController {
                 password,
                 confirmPassword,
                 1,
-                "Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng",
+                "M\u1eadt kh\u1ea9u kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng",
                 "",
-                "Máº­t kháº©u xÃ¡c nháº­n khÃ´ng khá»›p");
+                "M\u1eadt kh\u1ea9u x\u00e1c nh\u1eadn kh\u00f4ng kh\u1edbp");
         if (passwordError.isPresent()) {
             return redirectError(passwordError.get());
         }
         if (khachhangRepository.existsByGmailIgnoreCase(normalizedGmail)) {
-            return redirectError("Email Ä‘Ã£ tá»“n táº¡i");
+            return redirectError("Email \u0111\u00e3 t\u1ed3n t\u1ea1i");
         }
         if (khachhangRepository.existsBySDT(normalizedSdt)) {
-            return redirectError("Sá»‘ Ä‘iá»‡n thoáº¡i Ä‘Ã£ tá»“n táº¡i");
+            return redirectError("S\u1ed1 \u0111i\u1ec7n tho\u1ea1i \u0111\u00e3 t\u1ed3n t\u1ea1i");
         }
 
         KhachHang_module kh = new KhachHang_module();
@@ -257,7 +266,7 @@ public class RegisterController {
         kh.setSDT(normalizedSdt);
         kh.setPassword(passwordEncoder.encode(password));
         kh.setGioi_tinh(gioiTinh);
-        kh.setNgay_sinh(VnDateParser.parseOptional(ngaySinh, "NgÃ y sinh"));
+        kh.setNgay_sinh(VnDateParser.parseOptional(ngaySinh, "Ng\u00e0y sinh"));
         kh.setDia_chi(diaChi);
         kh.setTong_so_DH_mua(0);
         kh.setTrang_thai("HOAT_DONG");

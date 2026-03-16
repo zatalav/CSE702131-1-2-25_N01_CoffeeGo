@@ -1,7 +1,6 @@
 package He_thong_quan_ly.demo.Controller.Admin;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import He_thong_quan_ly.demo.Module.Admin.DonHang_module;
-import He_thong_quan_ly.demo.Module.Admin.KhachHang_module;
 import He_thong_quan_ly.demo.Module.Admin.NguyenLieu_module;
 import He_thong_quan_ly.demo.Repository.Admin.QuanlydonhangRepository;
 import He_thong_quan_ly.demo.Repository.Admin.QuanlykhachhangRepository;
@@ -64,56 +62,39 @@ class DashboardApiController {
         java.time.LocalDate yesterday = today.minusDays(1);
         int currentYear = today.getYear();
 
-        List<DonHang_module> allOrders = donhangRepository.findAll();
-
-        long todayRevenue = 0L;
-        long yesterdayRevenue = 0L;
-        int todayOrders = 0;
-        int yesterdayOrders = 0;
-        long totalRevenue = 0L;
+        long todayRevenue = donhangRepository.sumRevenueByDateNonCancelled(
+                today.getYear(),
+                today.getMonthValue(),
+                today.getDayOfMonth());
+        long yesterdayRevenue = donhangRepository.sumRevenueByDateNonCancelled(
+                yesterday.getYear(),
+                yesterday.getMonthValue(),
+                yesterday.getDayOfMonth());
+        int todayOrders = (int) donhangRepository.countOrdersByDateNonCancelled(
+                today.getYear(),
+                today.getMonthValue(),
+                today.getDayOfMonth());
+        int yesterdayOrders = (int) donhangRepository.countOrdersByDateNonCancelled(
+                yesterday.getYear(),
+                yesterday.getMonthValue(),
+                yesterday.getDayOfMonth());
+        long totalRevenue = donhangRepository.sumRevenueNonCancelled();
 
         LinkedHashMap<Integer, Long> revenueByMonth = new LinkedHashMap<>();
         IntStream.rangeClosed(1, 12).forEach(month -> revenueByMonth.put(month, 0L));
 
-        for (DonHang_module order : allOrders) {
-            if (isCancelled(order.getTrang_thai())) {
+        for (Object[] row : donhangRepository.sumRevenueByMonthNonCancelled(currentYear)) {
+            if (row == null || row.length < 2 || row[0] == null || row[1] == null) {
                 continue;
             }
-
-            Long total = Optional.ofNullable(order.getTong_tien()).orElse(0L);
-            totalRevenue += total;
-
-            java.time.LocalDate orderDate = order.getNgay_dat() == null ? null : order.getNgay_dat().toLocalDate();
-            if (orderDate == null) {
-                continue;
-            }
-            if (orderDate.equals(today)) {
-                todayRevenue += total;
-                todayOrders++;
-            }
-            if (orderDate.equals(yesterday)) {
-                yesterdayRevenue += total;
-                yesterdayOrders++;
-            }
-
-            if (orderDate.getYear() == currentYear) {
-                int month = orderDate.getMonthValue();
-                revenueByMonth.put(month, revenueByMonth.get(month) + total);
-            }
+            int month = ((Number) row[0]).intValue();
+            long revenue = ((Number) row[1]).longValue();
+            revenueByMonth.put(month, revenue);
         }
 
-        List<KhachHang_module> customers = khachhangRepository.findAll();
-        long activeCustomers = customers.stream()
-                .filter(customer -> {
-                    String status = customer.getTrang_thai();
-                    return status == null || !status.equalsIgnoreCase("KHOA");
-                })
-                .count();
-
-        List<NguyenLieu_module> ingredients = nguyenlieuRepository.findAll();
-        long lowStock = ingredients.stream()
-                .filter(ingredient -> ingredient.getSlTon() > 0 && ingredient.getSlTon() < 10)
-                .count();
+        long totalCustomers = khachhangRepository.count();
+        long activeCustomers = khachhangRepository.countActiveCustomers();
+        long lowStock = nguyenlieuRepository.countLowStock(10);
 
         double revenuePercent = percentageChange(todayRevenue, yesterdayRevenue);
         double ordersPercent = percentageChange(todayOrders, yesterdayOrders);
@@ -127,7 +108,7 @@ class DashboardApiController {
         stats.put("revenuePercent", Math.round(revenuePercent * 10.0) / 10.0);
         stats.put("todayOrders", todayOrders);
         stats.put("ordersPercent", Math.round(ordersPercent * 10.0) / 10.0);
-        stats.put("totalCustomers", customers.size());
+        stats.put("totalCustomers", totalCustomers);
         stats.put("onlineCustomers", activeCustomers);
         stats.put("lowStock", lowStock);
         stats.put("totalRevenue", totalRevenue);
@@ -176,12 +157,9 @@ class DashboardApiController {
     @GetMapping("/inventory")
     public List<Map<String, Object>> getInventory() {
         List<Map<String, Object>> inventory = new ArrayList<>();
-        List<NguyenLieu_module> ingredients = nguyenlieuRepository.findAll();
-        ingredients.sort(Comparator.comparingInt(NguyenLieu_module::getSlTon));
+        List<NguyenLieu_module> ingredients = nguyenlieuRepository.findTopBySlTonAsc(PageRequest.of(0, 6));
 
-        int limit = Math.min(6, ingredients.size());
-        for (int i = 0; i < limit; i++) {
-            NguyenLieu_module ingredient = ingredients.get(i);
+        for (NguyenLieu_module ingredient : ingredients) {
             Map<String, Object> item = new HashMap<>();
             item.put("name", ingredient.getTenNguyenLieu());
             String unit = Optional.ofNullable(ingredient.getDonVi()).orElse("").trim();
@@ -208,14 +186,6 @@ class DashboardApiController {
             return "Sắp hết";
         }
         return "Đủ hàng";
-    }
-
-    private boolean isCancelled(String status) {
-        if (status == null) {
-            return false;
-        }
-        String normalized = status.toLowerCase(Locale.ROOT);
-        return normalized.contains("hủy") || normalized.contains("huy") || normalized.contains("cancel");
     }
 
     private String toStatusClass(String status) {

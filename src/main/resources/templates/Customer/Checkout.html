@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/css/customer/checkout.css?v=20260303c" />
+    <link rel="stylesheet" href="/css/customer/checkout.css?v=20260311a" />
   </head>
   <body th:attr="data-customer-id=${customerId}">
     <div class="cart-page">
@@ -23,6 +23,7 @@
 
       <div class="cart-layout">
         <section class="card cart-list-card">
+          <p id="cartFeedback" class="cart-feedback" style="display: none"></p>
           <div class="list-header">
             <h3>Sản phẩm trong giỏ</h3>
             <span id="cartCountText">0 sản phẩm</span>
@@ -67,6 +68,6 @@
       </div>
     </div>
 
-    <script type="module" src="/js/customer/checkout.js?v=20260310a"></script>
+    <script type="module" src="/js/customer/checkout.js?v=20260311a"></script>
   </body>
 </html>

@@ -47,6 +47,16 @@ body {
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
+.cart-feedback {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #f1c2be;
+  background: #fff4f3;
+  color: #8e2f2a;
+  font-size: 14px;
+}
+
 .list-header {
   display: flex;
   align-items: center;

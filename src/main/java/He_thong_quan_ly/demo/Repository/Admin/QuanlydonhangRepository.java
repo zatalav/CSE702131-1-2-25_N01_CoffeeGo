@@ -37,6 +37,20 @@ public interface QuanlydonhangRepository extends JpaRepository<DonHang_module, S
             """)
     List<DonHang_module> findByKhachHangIdOrderByNgayDatDesc(String khachhangId);
 
+    @Query(value = """
+                SELECT d
+                FROM DonHang_module d
+                WHERE d.khachHang.khachhang_id = :khachhangId
+                ORDER BY d.Ngay_dat DESC
+            """, countQuery = """
+                SELECT COUNT(d)
+                FROM DonHang_module d
+                WHERE d.khachHang.khachhang_id = :khachhangId
+            """)
+    Page<DonHang_module> findByKhachHangIdOrderByNgayDatDesc(
+            @Param("khachhangId") String khachhangId,
+            Pageable pageable);
+
     @Query("""
                 SELECT COUNT(d)
                 FROM DonHang_module d
@@ -151,4 +165,72 @@ public interface QuanlydonhangRepository extends JpaRepository<DonHang_module, S
                 FROM DonHang_module d
             """)
     Page<DonHang_module> findAllForAdminPaged(Pageable pageable);
+
+    @Query("""
+                     SELECT COALESCE(SUM(d.Tong_tien), 0)
+                     FROM DonHang_module d
+                     WHERE d.Trang_thai IS NULL
+                             OR (
+                                            lower(d.Trang_thai) NOT LIKE '%hủy%'
+                              AND lower(d.Trang_thai) NOT LIKE '%huy%'
+                              AND lower(d.Trang_thai) NOT LIKE '%cancel%'
+                             )
+            """)
+    long sumRevenueNonCancelled();
+
+    @Query("""
+                     SELECT COALESCE(SUM(d.Tong_tien), 0)
+                     FROM DonHang_module d
+                     WHERE FUNCTION('YEAR', d.Ngay_dat) = :year
+                            AND FUNCTION('MONTH', d.Ngay_dat) = :month
+                            AND FUNCTION('DAY', d.Ngay_dat) = :day
+                            AND (
+                                            d.Trang_thai IS NULL
+                                    OR (
+                                                     lower(d.Trang_thai) NOT LIKE '%hủy%'
+                                            AND lower(d.Trang_thai) NOT LIKE '%huy%'
+                                            AND lower(d.Trang_thai) NOT LIKE '%cancel%'
+                                    )
+                            )
+            """)
+    long sumRevenueByDateNonCancelled(
+            @Param("year") int year,
+            @Param("month") int month,
+            @Param("day") int day);
+
+    @Query("""
+                     SELECT COUNT(d)
+                     FROM DonHang_module d
+                     WHERE FUNCTION('YEAR', d.Ngay_dat) = :year
+                            AND FUNCTION('MONTH', d.Ngay_dat) = :month
+                            AND FUNCTION('DAY', d.Ngay_dat) = :day
+                            AND (
+                                            d.Trang_thai IS NULL
+                                    OR (
+                                                     lower(d.Trang_thai) NOT LIKE '%hủy%'
+                                            AND lower(d.Trang_thai) NOT LIKE '%huy%'
+                                            AND lower(d.Trang_thai) NOT LIKE '%cancel%'
+                                    )
+                            )
+            """)
+    long countOrdersByDateNonCancelled(
+            @Param("year") int year,
+            @Param("month") int month,
+            @Param("day") int day);
+
+    @Query("""
+                     SELECT FUNCTION('MONTH', d.Ngay_dat), COALESCE(SUM(d.Tong_tien), 0)
+                     FROM DonHang_module d
+                     WHERE FUNCTION('YEAR', d.Ngay_dat) = :year
+                            AND (
+                                            d.Trang_thai IS NULL
+                                    OR (
+                                                     lower(d.Trang_thai) NOT LIKE '%hủy%'
+                                            AND lower(d.Trang_thai) NOT LIKE '%huy%'
+                                            AND lower(d.Trang_thai) NOT LIKE '%cancel%'
+                                    )
+                            )
+                     GROUP BY FUNCTION('MONTH', d.Ngay_dat)
+            """)
+    List<Object[]> sumRevenueByMonthNonCancelled(@Param("year") int year);
 }
